@@ -13,6 +13,7 @@
     </parent>
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-json</artifactId>
@@ -59,7 +60,7 @@
                     <dependency>
                         <groupId>com.itfsw</groupId>
                         <artifactId>mybatis-generator-plugin</artifactId>
-                        <version>1.2.12</version>
+                        <version>1.2.20</version>
                     </dependency>
                 </dependencies>
             </plugin>
