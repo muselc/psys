@@ -41,10 +41,10 @@ public class WxHomeController {
             userId = 0;
         }
         //判断是否有缓存
-//        if (redisTemplate.hasKey(userId + "")) {
-//            Map<Object, Object> dataTemp = redisTemplate.opsForHash().entries(userId + "");
-//            return ResponseUtil.ok(jsonArrayTOmap(dataTemp));
-//        }
+        if (redisTemplate.hasKey(userId + "")) {
+            Map<Object, Object> dataTemp = redisTemplate.opsForHash().entries(userId + "");
+            return ResponseUtil.ok(jsonArrayTOmap(dataTemp));
+        }
 
         Map<String, Object> data = new HashMap<>();
 
@@ -60,17 +60,20 @@ public class WxHomeController {
         executorService.submit(newGoodsListTask);
 
         try {
-            data.put("newGoodsList", JSON.toJSONString(newGoodsListTask.get()));
-            data.put("hotGoodsList", JSON.toJSONString(hotGoodsListTask.get()));
+            data.put("newGoodsList", newGoodsListTask.get());
+            data.put("hotGoodsList", hotGoodsListTask.get());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //缓存数据
-//        redisTemplate.opsForHash().putAll(userId + "", data);
-//        redisTemplate.expire(userId + "", 5, TimeUnit.MINUTES);
 
         executorService.shutdown();
-
+//缓存数据
+        Map<String, Object> dataCache = new HashMap<>();
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            dataCache.put(entry.getKey(),JSON.toJSONString(entry.getValue()));
+        }
+        redisTemplate.opsForHash().putAll(userId + "", dataCache);
+        redisTemplate.expire(userId + "", 5, TimeUnit.MINUTES);
         return ResponseUtil.ok(data);
     }
 
