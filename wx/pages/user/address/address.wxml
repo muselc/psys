@@ -1,0 +1,28 @@
+<!--pages/user/address/address.wxml-->
+<view class='container'>
+  <radio-group class="radio-group">
+    <view class='address' wx:for="{{addressList}}" wx:key="id" data-address-id="{{item.id}}" data-index="{{index}}">
+      <view bindtap='detailAddress' data-address-id="{{item.id}}">
+        <view class='header'>
+          <view class='name'>{{item.name}}</view>
+          <view class='mobie'>{{item.moible}}</view>
+        </view>
+        <view class='line'></view>
+        <view class='content'>
+          <view class='detail'>{{item.detail}}</view>
+          <view class='area'>{{item.area}}</view>
+        </view>
+        <view class='line'></view>
+      </view>
+      <view class='foot'>
+        <label class='checkbox'>
+          <checkbox class="box" bindtap='defaultAddress' checked="{{item.isDefault}}" data-address-id="{{item.id}}" data-check="{{!item.isDefault}}"></checkbox>
+          设为默认</label>
+        <view class='del' bindtap='delAddress' data-address-id="{{item.id}}">删除</view>
+      </view>
+    </view>
+  </radio-group>
+
+
+</view>
+<button class='createAddress' bindtap='saveAddress'>创建新地址</button>

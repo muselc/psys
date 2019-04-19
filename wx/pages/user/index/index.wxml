@@ -1,0 +1,36 @@
+<!--pages/user/index/index.wxml-->
+<view class='contanier'>
+  <view class='my'>
+    <view class='my-info'>
+      <image class='avatar' src='{{userInfo.avatarUrl}}'></image>
+      <view class='name' bindtap='login'>{{userInfo.nickName}}</view>
+    </view>
+  </view>
+
+  <view class='my-list'>
+    <view class='list' bindtap='toOrders' data-index='0'>
+      <view class="{{tabClass[0]}}"></view>
+      <image src="../../../images/my-icon-1.png"></image>
+      <text>全部订单</text>
+    </view>
+
+    <view class="list" bindtap="toPay" data-index="1">
+      <view class="{{tabClass[1]}}"></view>
+      <image src="../../../images/my-icon-2.png" />
+      <text>待收货</text>
+    </view>
+
+    <view class="list" bindtap="toComent" data-index="2">
+      <view class="{{tabClass[2]}}"></view>
+      <image src="../../../images/my-icon-3.png" />
+      <text>待评价</text>
+    </view>
+
+    <view class="list" bindtap="toAddress" data-index="3">
+      <view class="{{tabClass[3]}}"></view>
+      <image src="../../../images/my-icon-4.png" />
+      <text>收货地址</text>
+    </view>
+  </view>
+
+</view>
