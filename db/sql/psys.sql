@@ -62,7 +62,7 @@ CREATE TABLE `footprint` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户表的用户ID',
   `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '浏览商品ID',
-  `add_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
   PRIMARY KEY (`id`)
@@ -84,7 +84,7 @@ CREATE TABLE `goods` (
   `is_hot` tinyint(1) DEFAULT NULL COMMENT '是否热门',
   `original_price` decimal(10,2) DEFAULT NULL COMMENT '原价',
   `current_price` decimal(10,2) DEFAULT NULL COMMENT '现价',
-  `add_time` datetime DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   `deleted` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)

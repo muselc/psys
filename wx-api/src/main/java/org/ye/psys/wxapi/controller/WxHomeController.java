@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.ye.psys.core.system.SystemConfig;
 import org.ye.psys.core.util.ResponseUtil;
 import org.ye.psys.db.service.GoodsService;
 import org.ye.psys.wxapi.annotation.LoginUser;
@@ -49,8 +50,8 @@ public class WxHomeController {
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
 
-        Callable<List> hotGoodsCallable = () -> goodsService.findByHot(0, 6);
-        Callable<List> newGoodsCallable = () -> goodsService.findByNew(0, 6);
+        Callable<List> hotGoodsCallable = () -> goodsService.findByHot(0, SystemConfig.getHotLimit());
+        Callable<List> newGoodsCallable = () -> goodsService.findByNew(0, SystemConfig.getNewLimit());
 
         FutureTask<List> hotGoodsListTask = new FutureTask<>(hotGoodsCallable);
         FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsCallable);
@@ -66,7 +67,7 @@ public class WxHomeController {
         }
 
         executorService.shutdown();
-//缓存数据
+        //缓存数据
         Map<String, Object> dataCache = new HashMap<>();
         for (Map.Entry<String, Object> entry : data.entrySet()) {
             dataCache.put(entry.getKey(),JSON.toJSONString(entry.getValue()));

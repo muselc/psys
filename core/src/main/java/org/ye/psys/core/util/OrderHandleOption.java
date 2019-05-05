@@ -1,4 +1,4 @@
-package org.ye.psys.wxapi.util;
+package org.ye.psys.core.util;
 
 /**
  * @Author liansongye

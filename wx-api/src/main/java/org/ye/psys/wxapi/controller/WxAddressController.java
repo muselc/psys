@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.ye.psys.core.util.ResponseUtil;
 import org.ye.psys.db.entity.Address;
+import org.ye.psys.db.entity.Area;
 import org.ye.psys.db.service.AddressService;
 import org.ye.psys.db.service.AreaService;
 import org.ye.psys.wxapi.annotation.LoginUser;
@@ -42,7 +43,7 @@ public class WxAddressController {
             String cname = areaService.findById(address.getCityId()).getName();
             String aname = areaService.findById(address.getAreaId()).getName();
             String area = pname + " " + cname + " " + aname;
-            temp.put("area",area);
+            temp.put("area", area);
             temp.put("detail", address.getDetail());
             temp.put("isDefault", address.getIsDefault());
             addressList.add(temp);
@@ -79,9 +80,21 @@ public class WxAddressController {
             address.setId(null);
             address.setUserId(userId);
             addressService.addAddress(address);
+            Area area = areaService.findById(address.getProvinceId());
+            area.setValue(area.getValue() + 1);
+            areaService.updateValue(area);
         } else {
             address.setUserId(userId);
             Address addressTemp = addressService.findById(address.getId());
+            if (null != address.getProvinceId() && !addressTemp.getProvinceId().equals(address.getProvinceId())) {
+                Area aread = areaService.findById(addressTemp.getProvinceId());
+                aread.setValue(aread.getValue() - 1);
+                areaService.updateValue(aread);
+
+                Area areau = areaService.findById(address.getProvinceId());
+                areau.setValue(areau.getValue() + 1);
+                areaService.updateValue(areau);
+            }
             if (null != address.getName())
                 addressTemp.setName(address.getName());
             if (null != address.getMobile())

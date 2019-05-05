@@ -3,14 +3,19 @@ package org.ye.psys.wxapi.service;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.service.WxPayService;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.ye.psys.core.config.Kd;
+import org.ye.psys.core.config.KdApiOrderDistinguish;
+import org.ye.psys.core.util.JacksonUtil;
+import org.ye.psys.core.util.OrderUtil;
 import org.ye.psys.core.util.ResponseUtil;
 import org.ye.psys.db.entity.*;
 import org.ye.psys.db.service.*;
 import org.ye.psys.wxapi.util.IpUtil;
-import org.ye.psys.wxapi.util.OrderHandleOption;
-import org.ye.psys.wxapi.util.OrderUtil;
+import org.ye.psys.core.util.OrderHandleOption;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -55,6 +60,8 @@ public class WxOrderService {
 
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private Kd kd;
 
     /**
      * 订单列表
@@ -273,7 +280,7 @@ public class WxOrderService {
         Map<String, Object> orderVo = new HashMap<String, Object>();
         orderVo.put("id", order.getId());
         orderVo.put("orderSn", order.getOrderSn());
-        orderVo.put("addTime", order.getAddTime());
+        orderVo.put("addTime", order.getCreateTime());
         orderVo.put("consignee", order.getConsignee());
         orderVo.put("mobile", order.getMobile());
         orderVo.put("address", order.getAddress());
@@ -284,6 +291,20 @@ public class WxOrderService {
         orderVo.put("handleOption", OrderUtil.build(order));
         orderVo.put("expCode", order.getShipChannel());
         orderVo.put("expNo", order.getShipSn());
+
+        KdApiOrderDistinguish api = new KdApiOrderDistinguish(kd);
+        try {
+            String expNo = order.getShipSn();
+            JSONObject dataJson = new JSONObject(api.getOrderTracesByJson(expNo));
+            String expCode = dataJson.getJSONArray("Shippers").getJSONObject(0).getString("ShipperCode");
+
+            String result = api.getOrderTracesByJson(expCode, expNo);
+            JSONObject data = new JSONObject(result);
+            JSONArray traces = data.getJSONArray("Traces");
+            orderVo.put("Traces",traces.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         List<OrderGoods> orderGoodsList = orderGoodsService.findByOrderId(order.getId());
 
@@ -313,6 +334,57 @@ public class WxOrderService {
         order.setConfirmTime(LocalDateTime.now());
         if (ordersService.update(order) == 0) {
             return ResponseUtil.updatedDateExpired();
+        }
+        return ResponseUtil.ok();
+    }
+
+    /**
+     * 取消订单
+     * 1.检测订单状态是否可取消
+     * 2.库存恢复
+     * 3.设置订单为取消状态
+     *
+     * @param body
+     */
+    public Object cancel( String body) {
+        Integer userId = JacksonUtil.parseInteger(body, "userId");
+        if (userId == null) {
+            return ResponseUtil.unlogin();
+        }
+        Integer orderId = JacksonUtil.parseInteger(body, "orderId");
+        if (orderId == null ){
+            return ResponseUtil.badArgument();
+        }
+
+        Orders order = ordersService.findById(orderId);
+        if (order == null) {
+            return ResponseUtil.badArgumentValue();
+        }
+        if (!order.getUserId().equals(userId)) {
+            return ResponseUtil.badArgumentValue();
+        }
+
+        //检测订单状态是否可取消
+        OrderHandleOption handleOption = OrderUtil.build(order);
+        if (!handleOption.isCancel()){
+            return ResponseUtil.fail("订单状态码错误，无法取消");
+        }
+
+        //库存恢复
+        List<OrderGoods> orderGoodsList = orderGoodsService.findByOrderId(orderId);
+        for (OrderGoods orderGoods:orderGoodsList){
+            Integer stockId = orderGoods.getProductId();
+            int number = orderGoods.getNumber();
+            if (goodsStockService.addStock(stockId, number)==0){
+                throw new RuntimeException("商品货品库存增加失败");
+            }
+        }
+
+        //设置订单为取消状态
+        order.setOrderStatus(OrderUtil.STATUS_AUTO_CANCEL);
+        order.setEndTime(LocalDateTime.now());
+        if (ordersService.update(order)==0){
+            throw new RuntimeException("更新数据已失效");
         }
         return ResponseUtil.ok();
     }

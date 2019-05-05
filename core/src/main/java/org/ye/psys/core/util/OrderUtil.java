@@ -1,4 +1,4 @@
-package org.ye.psys.wxapi.util;
+package org.ye.psys.core.util;
 
 /**
  * @Author liansongye
@@ -11,12 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
- * 订单流程：下单成功－》支付订单－》发货－》收货
+ * 订单流程：下单成功－》支付订单－》发货－》收货 -》评价
  * 订单状态：
  * 101 订单生成，未支付；102，下单未支付用户取消；103，下单未支付超期系统自动取消
  * 201 支付完成，商家未发货；202，订单生产，已付款未发货，用户申请退款；203，管理员执行退款操作，确认退款成功；
  * 301 商家发货，用户未确认；
  * 401 用户确认收货，订单结束； 402 用户没有确认收货，但是快递反馈已收获后，超过一定时间，系统自动确认收货，订单结束。
+ * 501 评价
  *
  * 当101用户未付款时，此时用户可以进行的操作是取消或者付款
  * 当201支付完成而商家未发货时，此时用户可以退款
@@ -35,6 +36,7 @@ public class OrderUtil {
     public static final Short STATUS_REFUND = 202;
     public static final Short STATUS_REFUND_CONFIRM = 203;
     public static final Short STATUS_AUTO_CONFIRM = 402;
+    public static final Short STATUS_COMMENT = 501;
 
 
     public static String orderStatusText(Orders order) {
@@ -75,7 +77,9 @@ public class OrderUtil {
         if (status == 402) {
             return "已收货(系统)";
         }
-
+        if(status == 501){
+            return "已评价";
+        }
         throw new IllegalStateException("orderStatus不支持");
     }
 
@@ -108,6 +112,8 @@ public class OrderUtil {
             handleOption.setDelete(true);
             handleOption.setComment(true);
             handleOption.setRebuy(true);
+        } else if (status == 501){
+            handleOption.setComment(true);
         } else {
             throw new IllegalStateException("status不支持");
         }
@@ -137,6 +143,9 @@ public class OrderUtil {
             status.add((short) 401);
 //            系统超时自动取消，此时应该不支持评价
 //            status.add((short)402);
+        } else if (showType.equals(5)) {
+            // 待收货订单
+            status.add((short) 501);
         } else {
             return null;
         }
@@ -177,6 +186,10 @@ public class OrderUtil {
     }
     public static boolean isAutoConfirmStatus(Orders order) {
         return OrderUtil.STATUS_AUTO_CONFIRM == order.getOrderStatus().shortValue();
+    }
+
+    public static boolean isStatusComment(Orders order) {
+        return OrderUtil.STATUS_COMMENT == order.getOrderStatus().shortValue();
     }
 }
 

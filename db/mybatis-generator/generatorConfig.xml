@@ -70,11 +70,11 @@
         <!--<table tableName="goods_specification">-->
             <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
         <!--</table>-->
-        <table tableName="goods_stock">
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-            <columnOverride column="specifications" javaType="java.lang.String[]"
-                            typeHandler="org.ye.psys.db.config.JsonStringArrayTypeHandler"/>
-        </table>
+        <!--<table tableName="goods_stock">-->
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+            <!--<columnOverride column="specifications" javaType="java.lang.String[]"-->
+                            <!--typeHandler="org.ye.psys.db.config.JsonStringArrayTypeHandler"/>-->
+        <!--</table>-->
         <!--<table tableName="area">-->
             <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
         <!--</table>-->
@@ -122,5 +122,14 @@
         <!--<table tableName="permission">-->
             <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
         <!--</table>-->
+        <!--<table tableName="issue">-->
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+        <!--</table>-->
+        <!--<table tableName="storage">-->
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+        <!--</table>-->
+        <table tableName="system">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
     </context>
 </generatorConfiguration>

@@ -1,7 +1,9 @@
 package org.ye.psys.db.service;
 
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.ye.psys.db.entity.Orders;
 import org.ye.psys.db.entity.OrdersExample;
 import org.ye.psys.db.mapper.OrdersMapper;
@@ -28,10 +30,15 @@ public class OrdersService {
             criteria.andOrderStatusIn(orderStatus);
         }
         criteria.andDeletedEqualTo(false);
-        example.setOrderByClause("add_time desc");
+        example.setOrderByClause("create_time desc");
         return ordersMapper.selectByExample(example);
     }
 
+    public List<Orders> findByStatus( Short orderStatus) {
+        OrdersExample example = new OrdersExample();
+        example.or().andDeletedEqualTo(false).andOrderStatusEqualTo(orderStatus);
+        return ordersMapper.selectByExample(example);
+    }
     public String generateOrderSn() {
             int machineId = 1;//最大支持1-9个集群机器部署
             int hashCodev = UUID.randomUUID().toString().hashCode();
@@ -45,7 +52,7 @@ public class OrdersService {
     }
 
     public int add(Orders order) {
-        order.setAddTime(LocalDateTime.now());
+        order.setCreateTime(LocalDateTime.now());
         order.setUpdateTime(LocalDateTime.now());
         return ordersMapper.insertSelective(order);
     }
@@ -54,6 +61,12 @@ public class OrdersService {
         return ordersMapper.selectByPrimaryKey(orderId);
     }
 
+
+    public Orders findByOrderSn(String orderSn) {
+        OrdersExample example = new OrdersExample();
+        example.or().andDeletedEqualTo(false).andOrderSnEqualTo(orderSn);
+        return ordersMapper.selectOneByExample(example);
+    }
     public int update(Orders order) {
         order.setUpdateTime(LocalDateTime.now());
         return ordersMapper.updateByPrimaryKey(order);
@@ -63,5 +76,28 @@ public class OrdersService {
         OrdersExample example = new OrdersExample();
         example.or().andDeletedEqualTo(false);
         return (int) ordersMapper.countByExample(example);
+    }
+
+    public List<Orders> querySelective(Integer userId, String orderSn, List<Short> orderStatusArray, Integer page, Integer size, String sort, String order) {
+        OrdersExample example = new OrdersExample();
+        OrdersExample.Criteria criteria = example.createCriteria();
+
+        if (userId != null) {
+            criteria.andUserIdEqualTo(userId);
+        }
+        if (!StringUtils.isEmpty(orderSn)) {
+            criteria.andOrderSnEqualTo(orderSn);
+        }
+        if (orderStatusArray != null && orderStatusArray.size() != 0) {
+            criteria.andOrderStatusIn(orderStatusArray);
+        }
+        criteria.andDeletedEqualTo(false);
+
+        if (!StringUtils.isEmpty(sort) && !StringUtils.isEmpty(order)) {
+            example.setOrderByClause(sort + " " + order);
+        }
+
+        PageHelper.startPage(page, size);
+        return ordersMapper.selectByExample(example);
     }
 }

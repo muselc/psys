@@ -28,7 +28,7 @@ public class UserService {
     }
 
     public void add(User user){
-        user.setAddTime(LocalDateTime.now());
+        user.setCreateTime(LocalDateTime.now());
         user.setUpdateTime(LocalDateTime.now());
         userMapper.insertSelective(user);
     }
@@ -61,6 +61,37 @@ public class UserService {
         }
 
         PageHelper.startPage(page, size);
+        return userMapper.selectByExample(example);
+    }
+
+    public int findBySex(int gender) {
+        UserExample example = new UserExample();
+        example.or().andGenderEqualTo((byte) gender).andDeletedEqualTo(false);
+        return (int) userMapper.countByExample(example);
+    }
+
+    public int countByAge(int start, int end) {
+        UserExample example = new UserExample();
+        example.or().andAgeBetween(start,end).andDeletedEqualTo(false);
+        return (int) userMapper.countByExample(example);
+    }
+
+
+    public int countOn() {
+        UserExample example = new UserExample();
+        example.or().andStatusEqualTo((byte) 1).andDeletedEqualTo(false);
+        return (int) userMapper.countByExample(example);
+    }
+
+    public List<User> queryByUsername(String username) {
+        UserExample example = new UserExample();
+        example.or().andUsernameEqualTo(username).andDeletedEqualTo(false);
+        return userMapper.selectByExample(example);
+    }
+
+    public List<User> queryByMobile(String mobile) {
+        UserExample example = new UserExample();
+        example.or().andMobileEqualTo(mobile).andDeletedEqualTo(false);
         return userMapper.selectByExample(example);
     }
 }

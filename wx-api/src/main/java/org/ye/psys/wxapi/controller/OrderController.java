@@ -26,20 +26,21 @@ public class OrderController {
      * 订单列表
      *
      * @param userId
-     * @param type 0全部订单
-     *             1待付款
-     *             2待收货
-     *             3待评价
+     * @param type   0全部订单
+     *               1待付款
+     *               2待收货
+     *               3待评价
      * @param page
      * @param size
      */
-    @RequestMapping(value = "list",method = RequestMethod.GET)
+    @RequestMapping(value = "list", method = RequestMethod.GET)
     public Object list(@LoginUser Integer userId,
                        @RequestParam(defaultValue = "0") Integer type,
                        @RequestParam(defaultValue = "1") Integer page,
-                       @RequestParam(defaultValue = "1") Integer size){
-        return wxOrderService.list(userId,type,page,size);
+                       @RequestParam(defaultValue = "1") Integer size) {
+        return wxOrderService.list(userId, type, page, size);
     }
+
     /**
      * 订单详情
      *
@@ -47,43 +48,51 @@ public class OrderController {
      * @param orderId 订单ID
      * @return 订单详情
      */
-    @RequestMapping(value = "detail",method = RequestMethod.GET)
+    @RequestMapping(value = "detail", method = RequestMethod.GET)
     public Object detail(@LoginUser Integer userId,
                          @RequestParam("orderId") Integer orderId) {
         return wxOrderService.detail(userId, orderId);
     }
+
     /**
      * 确认收货
      *
-     * @param body  {userId,orderId }
+     * @param body {userId,orderId }
      * @return 订单详情
      */
-    @RequestMapping(value = "confirm",method = RequestMethod.POST)
+    @RequestMapping(value = "confirm", method = RequestMethod.POST)
     public Object confirm(@RequestBody String body) {
-        Integer userId = JacksonUtil.parseInteger(body,"userId");
-        Integer orderId = JacksonUtil.parseInteger(body,"orderId");
+        Integer userId = JacksonUtil.parseInteger(body, "userId");
+        Integer orderId = JacksonUtil.parseInteger(body, "orderId");
         return wxOrderService.confirm(userId, orderId);
     }
 
     /**
      * 提交订单
-     *
      */
-    @RequestMapping(value = "submit",method = RequestMethod.GET)
+    @RequestMapping(value = "submit", method = RequestMethod.GET)
     public Object submit(@LoginUser Integer userId,
                          @RequestParam("addressId") Integer addressId
-                         ){
-        return wxOrderService.submit(userId,addressId);
+    ) {
+        return wxOrderService.submit(userId, addressId);
     }
 
     /**
-    * 准备支付
-    */
-    @RequestMapping(value = "prepay",method = RequestMethod.POST)
+     * 准备支付
+     */
+    @RequestMapping(value = "prepay", method = RequestMethod.POST)
     public Object prepay(@LoginUser Integer userId,
                          @RequestBody String body,
-                         HttpServletRequest httpServletRequest){
+                         HttpServletRequest httpServletRequest) {
         Integer orderId = JacksonUtil.parseInteger(body, "orderId");
-        return wxOrderService.perpay(userId,orderId,httpServletRequest);
+        return wxOrderService.perpay(userId, orderId, httpServletRequest);
+    }
+
+    /**
+     * 取消订单
+     */
+    @RequestMapping(value = "cancel", method = RequestMethod.POST)
+    public Object cancel(@RequestBody String body) {
+        return wxOrderService.cancel(body);
     }
 }

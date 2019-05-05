@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.ye.psys.db.entity.Goods;
 import org.ye.psys.db.entity.Goods.Column;
 import org.ye.psys.db.entity.GoodsExample;
@@ -11,6 +12,7 @@ import org.ye.psys.db.entity.GoodsSpecification;
 import org.ye.psys.db.mapper.GoodsMapper;
 import org.ye.psys.db.mapper.GoodsSpecificationMapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -76,5 +78,52 @@ public class GoodsService {
         GoodsExample example = new GoodsExample();
         example.or().andDeletedEqualTo(false);
         return (int) goodsMapper.countByExample(example);
+    }
+
+    public List<Goods> querySelective(String goodsSn, String name, Integer page, Integer limit, String sort, String order) {
+        GoodsExample example = new GoodsExample();
+        GoodsExample.Criteria criteria = example.createCriteria();
+
+        if (!org.springframework.util.StringUtils.isEmpty(goodsSn)) {
+            criteria.andGoodsNumEqualTo(goodsSn);
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(name)) {
+            criteria.andNameLike("%" + name + "%");
+        }
+        criteria.andDeletedEqualTo(false);
+
+        if (!org.springframework.util.StringUtils.isEmpty(sort) && !org.springframework.util.StringUtils.isEmpty(order)) {
+            example.setOrderByClause(sort + " " + order);
+        }
+
+        PageHelper.startPage(page, limit);
+        return goodsMapper.selectByExampleWithBLOBs(example);
+    }
+
+    public void deleteById(Integer gid) {
+        goodsMapper.logicalDeleteByPrimaryKey(gid);
+    }
+
+    public int updateById(Goods goods) {
+        goods.setUpdateTime(LocalDateTime.now());
+        return goodsMapper.updateByPrimaryKeySelective(goods);
+    }
+
+    public boolean checkExistByName(String name) {
+        GoodsExample example = new GoodsExample();
+        example.or().andNameEqualTo(name).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
+        return goodsMapper.countByExample(example) != 0;
+    }
+
+    public void add(Goods goods) {
+        goods.setCreateTime(LocalDateTime.now());
+        goods.setUpdateTime(LocalDateTime.now());
+        goodsMapper.insertSelective(goods);
+    }
+
+    public boolean checkExistByGoodsNum(String goodsNum) {
+        GoodsExample example = new GoodsExample();
+        example.or().andGoodsNumEqualTo(goodsNum).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
+        return goodsMapper.countByExample(example) != 0;
     }
 }
