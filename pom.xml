@@ -53,6 +53,11 @@
         <artifactId>all</artifactId>
         <version>${project.version}</version>
     </dependency>
+        <dependency>
+            <groupId>org.ye.psys</groupId>
+            <artifactId>admin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
