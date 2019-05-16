@@ -156,4 +156,8 @@ public interface OrderGoodsMapper {
      * @project https://github.com/itfsw/mybatis-generator-plugin
      */
     int logicalDeleteByPrimaryKey(Integer id);
+
+    List queryByGoodsSnL3(@Param("startTime") String startTime,@Param("endTime") String endTime);
+    List queryByGoodsSnL2(@Param("startTime") String startTime,@Param("endTime") String endTime);
+    List queryByGoodsSnL1(@Param("startTime") String startTime,@Param("endTime") String endTime);
 }

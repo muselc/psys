@@ -113,14 +113,24 @@ public class WxOrderService {
         return ResponseUtil.ok(result);
     }
 
-    public Object submit(Integer userId, Integer addressId) {
+    public Object submit(Integer userId, Integer addressId, Integer cartId, Integer count) {
         if (userId == null) {
             return ResponseUtil.unlogin();
         }
         if (addressId == null) {
             return ResponseUtil.badArgument();
         }
-        List<Cart> cartList = cartService.queryByUidAndChecked(userId);
+        List<Cart> cartList = new ArrayList<>();
+        int countTemp = 0;
+        if (cartId != 0) {
+            Cart cart = cartService.findById(cartId);
+            countTemp = cart.getNumber();
+            cart.setNumber(count);
+            cartList.add(cart);
+        } else {
+            cartList = cartService.queryByUidAndChecked(userId);
+        }
+
         //库存是否足够
         for (int i = 0; i < cartList.size(); ++i) {
             GoodsStock stock = goodsStockService.findById(cartList.get(i).getProductId());
@@ -181,19 +191,37 @@ public class WxOrderService {
         }
 
         //删除购物车已下单的
-        for (int i = 0; i < cartList.size(); ++i) {
-            cartService.deleteById(cartList.get(i).getId());
+        if (cartId != 0) {
+            Cart cart = cartList.get(0);
+            countTemp = countTemp - cart.getNumber();
+            if (countTemp > 0) {
+                cart.setNumber(countTemp);
+                cartService.update(cart);
+            } else if (countTemp == 0) {
+                cartService.deleteById(cart.getId());
+            } else if (countTemp < 0) {
+                return ResponseUtil.fail();
+            }
+        } else {
+            for (int i = 0; i < cartList.size(); ++i) {
+                cartService.deleteById(cartList.get(i).getId());
+            }
         }
         //库存减少
         for (Cart cart : cartList) {
             Integer stockId = cart.getProductId();
             GoodsStock goodsStock = goodsStockService.findById(stockId);
-            int left = goodsStock.getCount() - cart.getNumber();
+            int left = 0;
+            if (cartId != 0) {
+                left = goodsStock.getCount() - count;
+            } else {
+                left = goodsStock.getCount() - cart.getNumber();
+            }
             if (left < 0) {
                 throw new RuntimeException("下单的商品货品数量大于库存量");
             }
             goodsStock.setCount(left);
-            goodsStockService.reduceNum(stockId, left);
+            goodsStockService.reduceNum(stockId, goodsStock.getCount() - left);
         }
         Map<String, Object> data = new HashMap<>();
         data.put("orderId", orderId);
@@ -270,8 +298,8 @@ public class WxOrderService {
             return ResponseUtil.unlogin();
         }
         Orders order = ordersService.findById(orderId);
-        if (null==order){
-            return ResponseUtil.fail( "订单不存在");
+        if (null == order) {
+            return ResponseUtil.fail("订单不存在");
         }
         if (!order.getUserId().equals(userId)) {
             return ResponseUtil.fail("不是当前用户的订单");
@@ -301,7 +329,7 @@ public class WxOrderService {
             String result = api.getOrderTracesByJson(expCode, expNo);
             JSONObject data = new JSONObject(result);
             JSONArray traces = data.getJSONArray("Traces");
-            orderVo.put("Traces",traces.toList());
+            orderVo.put("Traces", traces.toList());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -321,12 +349,12 @@ public class WxOrderService {
         }
 
         Orders order = ordersService.findById(orderId);
-        if (null==order){
-            return ResponseUtil.fail( "订单不存在");
+        if (null == order) {
+            return ResponseUtil.fail("订单不存在");
         }
         OrderHandleOption handleOption = OrderUtil.build(order);
         if (!handleOption.isConfirm()) {
-            return ResponseUtil.fail( "订单不能确认收货");
+            return ResponseUtil.fail("订单不能确认收货");
         }
 
         //修改订单状态
@@ -334,6 +362,13 @@ public class WxOrderService {
         order.setConfirmTime(LocalDateTime.now());
         if (ordersService.update(order) == 0) {
             return ResponseUtil.updatedDateExpired();
+        }
+
+        //修改订单商品状态
+        List<OrderGoods> orderGoodsList = orderGoodsService.findByOrderId(orderId);
+        for (OrderGoods orderGoods : orderGoodsList) {
+            orderGoods.setIsfinish(true);
+            orderGoodsService.update(orderGoods);
         }
         return ResponseUtil.ok();
     }
@@ -346,13 +381,13 @@ public class WxOrderService {
      *
      * @param body
      */
-    public Object cancel( String body) {
+    public Object cancel(String body) {
         Integer userId = JacksonUtil.parseInteger(body, "userId");
         if (userId == null) {
             return ResponseUtil.unlogin();
         }
         Integer orderId = JacksonUtil.parseInteger(body, "orderId");
-        if (orderId == null ){
+        if (orderId == null) {
             return ResponseUtil.badArgument();
         }
 
@@ -366,16 +401,16 @@ public class WxOrderService {
 
         //检测订单状态是否可取消
         OrderHandleOption handleOption = OrderUtil.build(order);
-        if (!handleOption.isCancel()){
+        if (!handleOption.isCancel()) {
             return ResponseUtil.fail("订单状态码错误，无法取消");
         }
 
         //库存恢复
         List<OrderGoods> orderGoodsList = orderGoodsService.findByOrderId(orderId);
-        for (OrderGoods orderGoods:orderGoodsList){
+        for (OrderGoods orderGoods : orderGoodsList) {
             Integer stockId = orderGoods.getProductId();
             int number = orderGoods.getNumber();
-            if (goodsStockService.addStock(stockId, number)==0){
+            if (goodsStockService.addStock(stockId, number) == 0) {
                 throw new RuntimeException("商品货品库存增加失败");
             }
         }
@@ -383,9 +418,44 @@ public class WxOrderService {
         //设置订单为取消状态
         order.setOrderStatus(OrderUtil.STATUS_AUTO_CANCEL);
         order.setEndTime(LocalDateTime.now());
-        if (ordersService.update(order)==0){
+        if (ordersService.update(order) == 0) {
             throw new RuntimeException("更新数据已失效");
         }
         return ResponseUtil.ok();
     }
+
+    /**
+     * 模拟支付成功
+     */
+    public Object paySucess(Integer userId, Integer orderId, HttpServletRequest httpServletRequest) {
+
+        if (userId == null) {
+            return ResponseUtil.unlogin();
+        }
+        if (orderId == null) {
+            return ResponseUtil.badArgument();
+        }
+        Orders order = ordersService.findById(orderId);
+        if (null == order) {
+            return ResponseUtil.badArgument();
+        }
+        if (!order.getUserId().equals(userId)) {
+            return ResponseUtil.badArgumentValue();
+        }
+        //订单是否可支付
+        OrderHandleOption handleOption = OrderUtil.build(order);
+        if (!handleOption.isPay()) {
+            return ResponseUtil.fail("状态码不对，订单不能支付");
+        }
+        User user = userService.findById(userId);
+        String openId = user.getWeixinOpenid();
+        if (openId == null) {
+            return ResponseUtil.fail("openId缺失，订单不能支付");
+        }
+        order.setOrderStatus(OrderUtil.STATUS_PAY);
+        ordersService.update(order);
+        return ResponseUtil.ok();
+
+    }
+
 }

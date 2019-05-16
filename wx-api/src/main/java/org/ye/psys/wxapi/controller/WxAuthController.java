@@ -20,8 +20,8 @@ import org.ye.psys.wxapi.dao.UserInfo;
 import javax.servlet.http.HttpServletRequest;
 
 import org.ye.psys.core.util.ResponseUtil;
-import org.ye.psys.wxapi.dao.UserToken;
-import org.ye.psys.wxapi.service.UserTokenManager;
+import org.ye.psys.core.util.UserToken;
+import org.ye.psys.core.util.UserTokenManager;
 import org.ye.psys.wxapi.util.IpUtil;
 
 import java.time.LocalDateTime;
@@ -92,7 +92,6 @@ public class WxAuthController {
 
         Map<Object, Object> result = new HashMap<>();
         result.put("token", userToken);
-//        result.put("token", userToken.getToken());
         result.put("tokrnExpire", userToken.getExpireTime().toString());
         result.put("userInfo", userInfo);
         return ResponseUtil.ok(result);

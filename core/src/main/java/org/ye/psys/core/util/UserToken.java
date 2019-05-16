@@ -1,4 +1,4 @@
-package org.ye.psys.wxapi.dao;
+package org.ye.psys.core.util;
 
 import java.time.LocalDateTime;
 

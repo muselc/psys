@@ -100,4 +100,10 @@ public class OrdersService {
         PageHelper.startPage(page, size);
         return ordersMapper.selectByExample(example);
     }
+
+    public List<Orders> queryHasFinish() {
+        OrdersExample example = new OrdersExample();
+        example.or().andOrderStatusBetween((short) 401,(short)501);
+        return ordersMapper.selectByExample(example);
+    }
 }

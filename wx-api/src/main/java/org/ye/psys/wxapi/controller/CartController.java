@@ -85,7 +85,11 @@ public class CartController {
                 return ResponseUtil.updatedDataFailed();
             }
         }
-        return cartCount(userId);
+        Map<String, Object> data = new HashMap<>();
+        data.put("userId", cartCount(userId));
+        Integer id = cart.getId() == null ? exitCart.getId() : cart.getId();
+        data.put("cartId", id);
+        return data;
     }
 
     /**
@@ -231,41 +235,59 @@ public class CartController {
     /**
      * 购物车下单
      *
-     * @param userId    用户ID
+     * @param body userId,count,productId
      * @return 购物车操作结果
      */
-    @RequestMapping(value = "/checkout", method = RequestMethod.GET)
-    public Object checkout(@LoginUser Integer userId) {
+    @RequestMapping(value = "/checkout", method = RequestMethod.POST)
+    public Object checkout(@RequestBody String body) {
+        Integer userId = JacksonUtil.parseInteger(body, "userId");
         if (null == userId) {
             return ResponseUtil.unlogin();
         }
+        Integer count = JacksonUtil.parseInteger(body, "count");
+        Integer cartId = JacksonUtil.parseInteger(body, "cartId");
+        List<Cart> cartList = new ArrayList<>();
+        BigDecimal total;
+        //购物车购买
+        if (cartId == 0) {
+            //购买列表
+            cartList = cartService.queryByUidAndChecked(userId);
 
-        //购买列表
-        List<Cart> cartList = cartService.queryByUidAndChecked(userId);
+            double totals = 0.00;
+            for (int i = 0; i < cartList.size(); ++i) {
+                Cart temp = cartList.get(i);
+                totals = temp.getPrice().doubleValue() * temp.getNumber();
+            }
+            //总价格
+            total = new BigDecimal(totals);
+        } else {
+            Integer productId = JacksonUtil.parseInteger(body, "productId");
 
-        double totals = 0.00;
-        for (int i=0;i<cartList.size();++i){
-            Cart temp = cartList.get(i);
-            totals = temp.getPrice().doubleValue()*temp.getNumber();
+            Cart cart = cartService.findByUserandPro(userId, productId);
+            cart.setNumber(count);
+            double totals = 0.00;
+            totals = cart.getPrice().doubleValue() * count;
+            //总价格
+            total = new BigDecimal(totals);
+            cartList.add(cart);
         }
-        //总价格
-        BigDecimal total = new BigDecimal(totals);
 
         //收货地址
         Address address = addressService.findDefault(userId);
-        if (null == address){
+        if (null == address) {
             address = new Address();
             address.setId(0);
         }
         Map<String, Object> data = new HashMap<>();
         data.put("address", address);
-        data.put("cartList",cartList);
-        data.put("total",total);
+        data.put("cartList", cartList);
+        data.put("total", total);
         return ResponseUtil.ok(data);
 
     }
+
     @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public Object count(@LoginUser Integer userId){
+    public Object count(@LoginUser Integer userId) {
         if (null == userId) {
             return ResponseUtil.unlogin();
         }

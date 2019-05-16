@@ -95,14 +95,14 @@
         <!--<table tableName="orders">-->
             <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
         <!--</table>-->
-        <!--<table tableName="order_goods">-->
-            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
-            <!--<columnOverride column="specifications" javaType="java.lang.String[]"-->
-                            <!--typeHandler="org.ye.psys.db.config.JsonStringArrayTypeHandler"/>-->
-            <!--<columnOverride column="comments" javaType="java.lang.Integer[]"-->
-                            <!--typeHandler="org.ye.psys.db.config.JsonStringArrayTypeHandler"/>-->
+        <table tableName="order_goods">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="specifications" javaType="java.lang.String[]"
+                            typeHandler="org.ye.psys.db.config.JsonStringArrayTypeHandler"/>
+            <columnOverride column="comments" javaType="java.lang.Integer[]"
+                            typeHandler="org.ye.psys.db.config.JsonStringArrayTypeHandler"/>
 
-        <!--</table>-->
+        </table>
         <!--<table tableName="user_formid">-->
             <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
         <!--</table>-->
@@ -128,8 +128,11 @@
         <!--<table tableName="storage">-->
             <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
         <!--</table>-->
-        <table tableName="system">
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-        </table>
+        <!--<table tableName="system">-->
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+        <!--</table>-->
+        <!--<table tableName="user_chart">-->
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+        <!--</table>-->
     </context>
 </generatorConfiguration>

@@ -41,8 +41,8 @@ public class WxHomeController {
             userId = 0;
         }
         //判断是否有缓存
-        if (redisTemplate.hasKey(userId + "")) {
-            Map<Object, Object> dataTemp = redisTemplate.opsForHash().entries(userId + "");
+        if (redisTemplate.hasKey("firstMain")) {
+            Map<Object, Object> dataTemp = redisTemplate.opsForHash().entries( "firstMain");
             return ResponseUtil.ok(jsonArrayTOmap(dataTemp));
         }
 
@@ -72,8 +72,8 @@ public class WxHomeController {
         for (Map.Entry<String, Object> entry : data.entrySet()) {
             dataCache.put(entry.getKey(),JSON.toJSONString(entry.getValue()));
         }
-        redisTemplate.opsForHash().putAll(userId + "", dataCache);
-        redisTemplate.expire(userId + "", 5, TimeUnit.MINUTES);
+        redisTemplate.opsForHash().putAll( "firstMain", dataCache);
+        redisTemplate.expire("firstMain", 5, TimeUnit.MINUTES);
         return ResponseUtil.ok(data);
     }
 

@@ -42,4 +42,22 @@ public class OrderGoodsService {
         example.or().andGoodsSnEqualTo(goodsSn).andDeletedEqualTo(false);
         return orderGoodsMapper.selectByExample(example);
     }
+
+    public void update(OrderGoods orderGoods) {
+        orderGoods.setUpdateTime(LocalDateTime.now());
+        orderGoodsMapper.updateByPrimaryKey(orderGoods);
+        return;
+    }
+
+    public List queryByGoodsSnL3(String startTime,String endTime) {
+        return orderGoodsMapper.queryByGoodsSnL3(startTime,endTime);
+    }
+
+    public List queryByGoodsSnL1(String startTime, String endTime) {
+        return orderGoodsMapper.queryByGoodsSnL3(startTime,endTime);
+    }
+
+    public List queryByGoodsSnL2(String startTime, String endTime) {
+        return orderGoodsMapper.queryByGoodsSnL2(startTime,endTime);
+    }
 }

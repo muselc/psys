@@ -73,23 +73,6 @@ class SystemInitService {
         Map<String, String> infos = new LinkedHashMap<>();
 
         infos.put(SystemInfoPrinter.CREATE_PART_COPPER + 0, "系统信息");
-        // 测试获取application-db.yml配置信息
-//        infos.put("服务器端口", environment.getProperty("server.port"));
-//        infos.put("数据库USER", environment.getProperty("spring.datasource.druid.username"));
-//        infos.put("数据库地址", environment.getProperty("spring.datasource.druid.url"));
-//        infos.put("调试级别", environment.getProperty("logging.level.org.psys.mall.wx"));
-
-        // 测试获取application-core.yml配置信息
-//        infos.put(SystemInfoPrinter.CREATE_PART_COPPER + 1, "模块状态");
-//        infos.put("邮件", environment.getProperty("mall.notify.mail.enable"));
-//        infos.put("短信", environment.getProperty("mall.notify.sms.enable"));
-//        infos.put("模版消息", environment.getProperty("mall.notify.wx.enable"));
-//        infos.put("快递信息", environment.getProperty("mall.express.enable"));
-//        infos.put("快递鸟ID", environment.getProperty("mall.express.appId"));
-//        infos.put("对象存储", environment.getProperty("mall.storage.active"));
-//        infos.put("本地对象存储路径", environment.getProperty("mall.storage.local.storagePath"));
-//        infos.put("本地对象访问地址", environment.getProperty("mall.storage.local.address"));
-//        infos.put("本地对象访问端口", environment.getProperty("mall.storage.local.port"));
 
         // 微信相关信息
         infos.put(SystemInfoPrinter.CREATE_PART_COPPER + 2, "微信相关");

@@ -88,8 +88,6 @@ public class AuthController {
         Set<String> roles = roleService.queryByIds(roleIds);
         Set<String> permissions = permissionService.queryByRoleIds(roleIds);
         data.put("roles", roles);
-        // NOTE
-        // 这里需要转换perms结构，因为对于前端而已API形式的权限更容易理解
         data.put("perms", toAPI(permissions));
         return ResponseUtil.ok(data);
     }
@@ -119,8 +117,6 @@ public class AuthController {
                 apis.clear();
                 apis.add("*");
                 return apis;
-//                return systemPermissionsMap.values();
-
             }
         }
         return apis;

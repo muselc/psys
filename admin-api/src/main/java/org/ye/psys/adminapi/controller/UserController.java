@@ -103,6 +103,8 @@ public class UserController {
         return ResponseUtil.ok(user);
     }
 
+    @RequiresPermissions("admin:user:ageandsex")
+    @RequiresPermissionsDesc(menu={"参谋" , "数据分析"}, button="年龄和性别")
     @GetMapping("/ageandsex")
     public Object ageAndSexData() {
         int noMan = userService.findBySex(0);

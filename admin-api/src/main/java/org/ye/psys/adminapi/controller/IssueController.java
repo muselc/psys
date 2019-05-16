@@ -29,7 +29,7 @@ public class IssueController {
     @Autowired
     private IssueService issueService;
 
-    @RequiresPermissions("admin:issue:list")
+    @RequiresPermissions("admin:issue:list1")
     @RequiresPermissionsDesc(menu={"商场管理" , "通用问题"}, button="查询")
     @GetMapping("/list")
     public Object list(String question,

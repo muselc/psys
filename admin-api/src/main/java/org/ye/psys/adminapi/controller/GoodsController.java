@@ -1,6 +1,7 @@
 package org.ye.psys.adminapi.controller;
 
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -10,19 +11,18 @@ import org.springframework.web.bind.annotation.*;
 import org.ye.psys.adminapi.annotation.RequiresPermissionsDesc;
 import org.ye.psys.adminapi.dao.GoodsAllinone;
 import org.ye.psys.adminapi.service.AdminGoodsService;
+import org.ye.psys.core.util.JacksonUtil;
 import org.ye.psys.core.util.ResponseUtil;
 import org.ye.psys.core.validator.Order;
 import org.ye.psys.core.validator.Sort;
-import org.ye.psys.db.entity.Category;
-import org.ye.psys.db.entity.Goods;
-import org.ye.psys.db.entity.GoodsSpecification;
-import org.ye.psys.db.entity.GoodsStock;
-import org.ye.psys.db.service.CategoryService;
-import org.ye.psys.db.service.GoodsService;
-import org.ye.psys.db.service.GoodsSpecificationService;
-import org.ye.psys.db.service.GoodsStockService;
+import org.ye.psys.db.entity.*;
+import org.ye.psys.db.service.*;
 
 import javax.validation.constraints.NotNull;
+import java.lang.System;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +43,10 @@ public class GoodsController {
     private CategoryService categoryService;
     @Autowired
     private AdminGoodsService adminGoodsService;
+    @Autowired
+    private OrdersService ordersService;
+    @Autowired
+    private OrderGoodsService orderGoodsService;
 
 
     /**
@@ -135,7 +139,6 @@ public class GoodsController {
         Goods goods = goodsService.findByGoodsNum(id.toString());
         List<GoodsStock> Stocks = goodsStockService.findByGoodsNum(id.toString());
         List<GoodsSpecification> specifications = goodsSpecificationService.queryByGoodsNum(id.toString());
-//        List<GoodsAttribute> attributes = attributeService.queryByGid(id);
 
         Integer categoryId = goods.getCategoryId();
         Category category = categoryService.findById(categoryId);
@@ -149,7 +152,6 @@ public class GoodsController {
         data.put("goods", goods);
         data.put("specifications", specifications);
         data.put("Stocks", Stocks);
-//        data.put("attributes", attributes);
         data.put("categoryIds", categoryIds);
 
         return ResponseUtil.ok(data);
@@ -159,5 +161,47 @@ public class GoodsController {
     public Object list2() {
         return adminGoodsService.list2();
     }
+
+    @RequiresPermissions("admin:goods:data")
+    @RequiresPermissionsDesc(menu = {"参谋", "数据分析"}, button = "销售排行榜")
+    @PostMapping("/data")
+    public Object data(@RequestBody String body) {
+        Integer isSingle = JacksonUtil.parseInteger(body,"isSingle");
+        Integer time = JacksonUtil.parseInteger(body,"time");
+        List list = new ArrayList();
+
+        long end = System.currentTimeMillis();
+
+        long start = end - time * 86400000L;
+
+        String endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(end);
+        String startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(start);
+
+        //前10
+        if (isSingle == 1) {
+            list = orderGoodsService.queryByGoodsSnL1(startTime, endTime);
+        } else if (isSingle == 2) {
+            list = orderGoodsService.queryByGoodsSnL2(startTime, endTime);
+
+        } else if (isSingle == 3) {
+            list = orderGoodsService.queryByGoodsSnL3(startTime, endTime);
+            List nList = new ArrayList();
+            for (int i = 0; i < list.size(); i++) {
+                Map map = (Map) list.get(i);
+                String goodsN = (String) map.get("goods_sn");
+                BigDecimal total = (BigDecimal) map.get("total");
+                Goods goods = goodsService.findByGoodsNum(goodsN);
+                Map temp = new HashedMap();
+                temp.put("newName",goods.getName());
+                temp.put("total",total);
+                nList.add(temp);
+            }
+            list = nList;
+        }
+        Map<String, Object> data = new HashedMap();
+        data.put("list", list);
+        return ResponseUtil.ok(data);
+    }
+
 
 }

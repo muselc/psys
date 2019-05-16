@@ -1,8 +1,10 @@
 package org.ye.psys.adminapi.controller;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.ye.psys.adminapi.annotation.RequiresPermissionsDesc;
 import org.ye.psys.core.util.JacksonUtil;
 import org.ye.psys.core.util.ResponseUtil;
 import org.ye.psys.core.validator.Order;
@@ -25,6 +27,8 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
+    @RequiresPermissions("admin:comment:list")
+    @RequiresPermissionsDesc(menu = {"商品管理", "评论管理"}, button = "列表")
     @GetMapping("/list")
     public Object list(String userId, Integer orderId,
                        @RequestParam(defaultValue = "1") Integer page,
@@ -39,6 +43,8 @@ public class CommentController {
         return ResponseUtil.ok(data);
     }
 
+    @RequiresPermissions("admin:comment:reply")
+    @RequiresPermissionsDesc(menu = {"商品管理", "评论管理"}, button = "回复")
     @PostMapping("/reply")
     public Object reply(@RequestBody String body) {
         Integer commentId = JacksonUtil.parseInteger(body, "commentId");

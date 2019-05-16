@@ -9,7 +9,7 @@
           </div>
           <div class="card-panel-description">
             <div class="card-panel-text">在线用户</div>
-            <count-to :start-val="0" :end-val="userTotal" :duration="2600" class="card-panel-num"/>
+            <count-to :start-val="0" :end-val="userOnTotal" :duration="2600" class="card-panel-num"/>
           </div>
         </div>
       </el-col>
@@ -19,7 +19,7 @@
             <svg-icon icon-class="message" class-name="card-panel-icon" />
           </div>
           <div class="card-panel-description">
-            <div class="card-panel-text">商品数量</div>
+            <div class="card-panel-text">商品种类</div>
             <count-to :start-val="0" :end-val="goodsTotal" :duration="3000" class="card-panel-num"/>
           </div>
         </div>
@@ -60,7 +60,7 @@ export default {
   },
   data() {
     return {
-      userTotal: 0,
+      userTOnotal: 0,
       goodsTotal: 0,
       productTotal: 0,
       orderTotal: 0
@@ -68,7 +68,7 @@ export default {
   },
   created() {
     info().then(response => {
-      this.userTotal = response.data.data.userTotal
+      this.userOnTotal = response.data.data.userOnTotal
       this.goodsTotal = response.data.data.goodsTotal
       this.productTotal = response.data.data.productTotal
       this.orderTotal = response.data.data.orderTotal

@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 import org.ye.psys.core.config.Kd;
 import org.ye.psys.core.config.KdApiOrderDistinguish;
 import org.ye.psys.core.util.OrderUtil;
+import org.ye.psys.db.entity.OrderGoods;
 import org.ye.psys.db.entity.Orders;
+import org.ye.psys.db.service.OrderGoodsService;
 import org.ye.psys.db.service.OrdersService;
 import org.ye.psys.db.service.SystemService;
 
@@ -30,6 +32,8 @@ public class AutoConfirm {
     private SystemService systemService;
     @Autowired
     private Kd kd;
+    @Autowired
+    private OrderGoodsService orderGoodsService;
 
     //一小时检测一次
     @Scheduled(cron = "0 0 0/1 * * ? ")
@@ -64,6 +68,13 @@ public class AutoConfirm {
                     if (isBefoe == false) {
                         order.setOrderStatus(OrderUtil.STATUS_AUTO_CONFIRM);
                         ordersService.update(order);
+
+                        //修改订单商品状态
+                        List<OrderGoods> orderGoodsList = orderGoodsService.findByOrderId(order.getId());
+                        for (OrderGoods orderGoods : orderGoodsList) {
+                            orderGoods.setIsfinish(true);
+                            orderGoodsService.update(orderGoods);
+                        }
                     }
                 }
             } catch (Exception e) {

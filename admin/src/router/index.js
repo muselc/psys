@@ -199,7 +199,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/goods/list'),
         name: 'goodsList',
         meta: {
-          perms: ['GET /admin/goods/list', 'POST /admin/goods/delete'],
+          perms: ['GET /admin/goods/list'],
           title: '商品列表',
           noCache: true
         }
@@ -209,7 +209,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/goods/create'),
         name: 'goodsCreate',
         meta: {
-          perms: ['POST /admin/goods/create'],
+          perms: ['GET /admin/goods/list', 'POST /admin/goods/create'],
           title: '商品上架',
           noCache: true
         }
@@ -219,7 +219,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/goods/edit'),
         name: 'goodsEdit',
         meta: {
-          perms: ['GET /admin/goods/detail', 'POST /admin/goods/update', 'POST /admin/goods/catAndBrand'],
+          perms: ['GET /admin/goods/list', 'GET /admin/goods/detail', 'POST /admin/goods/update', 'POST /admin/goods/catAndBrand'],
           title: '商品编辑',
           noCache: true
         },
@@ -230,7 +230,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/goods/comment'),
         name: 'goodsComment',
         meta: {
-          perms: ['GET /admin/comment/list', 'POST /admin/comment/delete'],
+          perms: ['GET /admin/goods/list', 'GET /admin/comment/list', 'POST /admin/comment/delete'],
           title: '商品评论',
           noCache: true
         }
@@ -244,7 +244,7 @@ export const asyncRouterMap = [
     alwaysShow: true,
     name: 'dataAnalysis',
     meta: {
-      title: '数据分析',
+      title: '参谋',
       icon: 'chart'
     },
     children: [
@@ -253,7 +253,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/dataAnalysis/area'),
         name: 'area',
         meta: {
-          perms: ['GET /user/dataArea'],
+          perms: ['GET /admin/goods/list', 'GET admin/area/dataArea'],
           title: '地域分布',
           noCache: true
         }
@@ -263,18 +263,18 @@ export const asyncRouterMap = [
         component: () => import('@/views/dataAnalysis/age'),
         name: 'age',
         meta: {
-          perms: ['GET /user/dataAge'],
+          perms: ['GET /admin/goods/list', 'GET admin/user/ageandsex'],
           title: '年龄和性别分布',
           noCache: true
         }
       },
       {
-        path: 'predict',
-        component: () => import('@/views/dataAnalysis/predict'),
-        name: 'predict',
+        path: 'rank',
+        component: () => import('@/views/dataAnalysis/rank'),
+        name: 'rank',
         meta: {
-          perms: ['GET /user/predict'],
-          title: '销售预测',
+          perms: ['GET /admin/goods/list', 'POST admin/goods/data'],
+          title: '销售排行榜',
           noCache: true
         }
       }

@@ -78,7 +78,7 @@ export default {
         this.__resizeHandler()
       }
     },
-    setOptions({ expectedData, actualData } = {}) {
+    setOptions({ actualData, expectedData } = {}) {
       this.chart.setOption({
         xAxis: {
           data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -110,7 +110,7 @@ export default {
           data: ['expected', 'actual']
         },
         series: [{
-          name: 'expected', itemStyle: {
+          name: 'actual', itemStyle: {
             normal: {
               color: '#FF005A',
               lineStyle: {
@@ -126,7 +126,7 @@ export default {
           animationEasing: 'cubicInOut'
         },
         {
-          name: 'actual',
+          name: 'expected',
           smooth: true,
           type: 'line',
           itemStyle: {

@@ -35,8 +35,6 @@ public class AreaController {
 
     @Autowired
     private AreaService areaService;
-    @Autowired
-    private AddressService addressService;
 
     @GetMapping("/clist")
     public Object clist(@NotNull Integer id) {
@@ -61,12 +59,11 @@ public class AreaController {
         return ResponseUtil.ok(data);
     }
     @RequiresPermissions("admin:area:areaData")
-    @RequiresPermissionsDesc(menu={"数据分析" , "区域分布"}, button="查询")
+    @RequiresPermissionsDesc(menu={"参谋" , "数据分析"}, button="区域分布")
     @GetMapping("/areaData")
     public Object areaData() {
         List<Map> areaList = new ArrayList<>();
 
-        Map<String, Integer> areaValue = new HashMap<>();
         List<Area> a = areaService.findByType(1);
         for (Area area : a) {
             Map<String, String> areaData = new HashMap<>();

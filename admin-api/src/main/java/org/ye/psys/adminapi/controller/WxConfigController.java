@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.ye.psys.adminapi.annotation.RequiresPermissionsDesc;
@@ -27,6 +28,9 @@ public class WxConfigController {
 
     @Autowired
     private SystemService systemService;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @RequiresPermissions("admin:config:express:list")
     @RequiresPermissionsDesc(menu = {"商场配置", "运费配置"}, button = "详情")
@@ -78,6 +82,7 @@ public class WxConfigController {
         Map<String, String> data = JacksonUtil.toMap(body);
         systemService.updateConfig(data);
         SystemConfig.updateConfigs(data);
+        redisTemplate.delete("firstMain");
         return ResponseUtil.ok();
     }
 }

@@ -46,3 +46,11 @@ export function listCat() {
     method: 'get'
   })
 }
+
+export function goodsData(data) {
+  return request({
+    url: '/goods/data',
+    method: 'post',
+    data
+  })
+}

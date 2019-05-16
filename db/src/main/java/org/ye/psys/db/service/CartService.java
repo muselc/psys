@@ -70,4 +70,14 @@ public class CartService {
         cartMapper.deleteByPrimaryKey(id);
         return;
     }
+
+    public Cart findByUserandPro(Integer userId, Integer productId) {
+        CartExample example = new CartExample();
+        example.or().andUserIdEqualTo(userId).andProductIdEqualTo(productId).andDeletedEqualTo(false);
+        return cartMapper.selectOneByExample(example);
+    }
+
+    public void update(Cart cart) {
+        cartMapper.updateByPrimaryKey(cart);
+    }
 }

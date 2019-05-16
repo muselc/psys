@@ -223,15 +223,15 @@ import Pagination from "@/components/Pagination"; // Secondary package based on 
 import checkPermission from "@/utils/permission"; // 权限判断函数
 
 const statusMap = {
-  101: "未付款",
-  102: "用户取消",
-  103: "系统取消",
-  201: "已付款",
-  202: "申请退款",
-  203: "已退款",
-  301: "已发货",
-  401: "用户收货",
-  402: "系统收货"
+  101: '未付款',
+  102: '用户取消',
+  103: '系统取消',
+  201: '已付款',
+  202: '申请退款',
+  203: '已退款',
+  301: '已发货',
+  401: '用户收货',
+  402: '系统收货'
 };
 
 export default {

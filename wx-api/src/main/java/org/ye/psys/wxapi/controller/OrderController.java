@@ -5,10 +5,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.ye.psys.core.util.JacksonUtil;
+import org.ye.psys.db.entity.Cart;
 import org.ye.psys.wxapi.annotation.LoginUser;
 import org.ye.psys.wxapi.service.WxOrderService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @Author liansongye
@@ -72,13 +74,16 @@ public class OrderController {
      */
     @RequestMapping(value = "submit", method = RequestMethod.GET)
     public Object submit(@LoginUser Integer userId,
-                         @RequestParam("addressId") Integer addressId
+                         @RequestParam("addressId") Integer addressId,
+                         @RequestParam("cartId") Integer cartId,
+                         @RequestParam("count") Integer count
     ) {
-        return wxOrderService.submit(userId, addressId);
+        return wxOrderService.submit(userId, addressId, cartId, count);
     }
 
     /**
      * 准备支付
+     * 目前支付只会失败
      */
     @RequestMapping(value = "prepay", method = RequestMethod.POST)
     public Object prepay(@LoginUser Integer userId,
@@ -95,4 +100,17 @@ public class OrderController {
     public Object cancel(@RequestBody String body) {
         return wxOrderService.cancel(body);
     }
+
+    /**
+     * 支付成功
+     */
+    @RequestMapping(value = "pay", method = RequestMethod.POST)
+    public Object paySucess(@LoginUser Integer userId,
+                            @RequestBody String body,
+                            HttpServletRequest httpServletRequest) {
+        Integer orderId = JacksonUtil.parseInteger(body, "orderId");
+        return wxOrderService.paySucess(userId, orderId, httpServletRequest);
+    }
+
+
 }

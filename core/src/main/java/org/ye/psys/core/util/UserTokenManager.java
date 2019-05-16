@@ -1,7 +1,5 @@
-package org.ye.psys.wxapi.service;
+package org.ye.psys.core.util;
 
-import org.ye.psys.core.util.CharUtil;
-import org.ye.psys.wxapi.dao.UserToken;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -30,11 +28,11 @@ public class UserTokenManager {
     public static UserToken generateToken(Integer id) {
         UserToken userToken = null;
 
-//        userToken = idMap.get(id);
-//        if(userToken != null) {
-//            tokenMap.remove(userToken.getToken());
-//            idMap.remove(id);
-//        }
+        userToken = idMap.get(id);
+        if(userToken != null) {
+            tokenMap.remove(userToken.getToken());
+            idMap.remove(id);
+        }
 
         String token = CharUtil.getRandomString(32);
         while (tokenMap.containsKey(token)) {
@@ -42,7 +40,7 @@ public class UserTokenManager {
         }
 
         LocalDateTime update = LocalDateTime.now();
-        LocalDateTime expire = update.plusDays(1);
+        LocalDateTime expire = update.plusMinutes(15);
 
         userToken = new UserToken();
         userToken.setToken(token);
@@ -75,6 +73,10 @@ public class UserTokenManager {
         String token = userToken.getToken();
         idMap.remove(userId);
         tokenMap.remove(token);
+    }
+
+    public static int count() {
+        return idMap.size();
     }
 }
 
