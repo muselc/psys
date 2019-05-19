@@ -85,4 +85,9 @@ public class AddressService {
         return addressMapper.selectByExample(example);
     }
 
+    public List count() {
+
+        return addressMapper.count();
+    }
+
 }

@@ -49,7 +49,7 @@ public class UserService {
         UserExample.Criteria criteria = example.createCriteria();
 
         if (!StringUtils.isEmpty(username)) {
-            criteria.andUsernameLike("%" + username + "%");
+            criteria.andNicknameLike("%" + username + "%");
         }
         if (!StringUtils.isEmpty(mobile)) {
             criteria.andMobileEqualTo(mobile);
@@ -83,11 +83,6 @@ public class UserService {
         return (int) userMapper.countByExample(example);
     }
 
-    public List<User> queryByUsername(String username) {
-        UserExample example = new UserExample();
-        example.or().andUsernameEqualTo(username).andDeletedEqualTo(false);
-        return userMapper.selectByExample(example);
-    }
 
     public List<User> queryByMobile(String mobile) {
         UserExample example = new UserExample();

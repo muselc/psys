@@ -512,4 +512,11 @@
     update address set deleted = 1
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="count" parameterType="map">
+    select city_id,count(city_id)
+    from address
+    where is_default = true and deleted = false
+    group by city_id
+  </select>
+
 </mapper>

@@ -34,7 +34,7 @@ public class AutoCancle {
 
         if (ordersList.size() > 0) {
             //获取时限
-            int maxTime = systemService.findByKName("mall_order_unpaid");
+            int maxTime = (int) systemService.findByKName("mall_order_unpaid");
             for (Orders order : ordersList) {
                 Long nowTime = Calendar.getInstance().getTimeInMillis();
 

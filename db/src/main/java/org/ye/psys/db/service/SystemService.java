@@ -89,9 +89,9 @@ public class SystemService {
         systemMapper.insertSelective(system);
     }
 
-    public int findByKName(String keyName) {
+    public double findByKName(String keyName) {
         SystemExample example = new SystemExample();
         example.or().andKeyNameEqualTo(keyName).andDeletedEqualTo(false);
-        return Integer.valueOf(systemMapper.selectOneByExample(example).getKeyValue());
+        return Double.valueOf(systemMapper.selectOneByExample(example).getKeyValue());
     }
 }

@@ -58,7 +58,7 @@ public class AutoConfirm {
                     //签收时间
                     String time = traces.getJSONObject(traces.length() - 1).getString("AcceptTime");
 
-                    int maxTime = systemService.findByKName("mall_order_unconfirm");
+                    int maxTime = (int) systemService.findByKName("mall_order_unconfirm");
 
                     Calendar pre = Calendar.getInstance();
                     pre.setTime(sdf.parse(time));

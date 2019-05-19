@@ -374,4 +374,9 @@
     </if>
     limit 1
   </select>
+  <update id="updateValueById" parameterType="map">
+    update area
+    set value = #{value,jdbcType=INTEGER},
+    where id = #{id,jdbcType=INTEGER}
+  </update>
 </mapper>

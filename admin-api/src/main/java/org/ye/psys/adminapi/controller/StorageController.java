@@ -35,7 +35,7 @@ public class StorageController {
         String originalFilename = file.getOriginalFilename();
         String url = storagesService.store(file.getInputStream(), file.getSize(), file.getContentType(), originalFilename);
         Map<String, Object> data = new HashMap<>();
-        data.put("url", url);
+        data.put("pic", url);
         return ResponseUtil.ok(data);
     }
 

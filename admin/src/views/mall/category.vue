@@ -17,21 +17,11 @@
 
       <el-table-column align="center" label="类目名" prop="name"/>
 
-      <el-table-column align="center" property="iconUrl" label="类目图标">
-        <template slot-scope="scope">
-          <img v-if="scope.row.iconUrl" :src="scope.row.iconUrl" width="40">
-        </template>
-      </el-table-column>
-
       <el-table-column align="center" property="picUrl" label="类目图片">
         <template slot-scope="scope">
           <img v-if="scope.row.picUrl" :src="scope.row.picUrl" width="80">
         </template>
       </el-table-column>
-
-      <el-table-column align="center" label="关键字" prop="keywords"/>
-
-      <el-table-column align="center" min-width="100" label="简介" prop="desc"/>
 
       <el-table-column
         :filters="[{ text: '一级类目', value: 'L1' }, { text: '二级类目', value: 'L2' }]"
@@ -62,9 +52,6 @@
         <el-form-item label="类目名称" prop="name">
           <el-input v-model="dataForm.name"/>
         </el-form-item>
-        <el-form-item label="关键字" prop="keywords">
-          <el-input v-model="dataForm.keywords"/>
-        </el-form-item>
         <el-form-item label="级别" prop="level">
           <el-select v-model="dataForm.level" @change="onLevelChange">
             <el-option label="一级类目" value="L1"/>
@@ -75,18 +62,6 @@
           <el-select v-model="dataForm.pid">
             <el-option v-for="item in catL1" :key="item.value" :label="item.label" :value="item.value"/>
           </el-select>
-        </el-form-item>
-        <el-form-item label="类目图标" prop="iconUrl">
-          <el-upload
-            :headers="headers"
-            :action="uploadPath"
-            :show-file-list="false"
-            :on-success="uploadIconUrl"
-            class="avatar-uploader"
-            accept=".jpg,.jpeg,.png,.gif">
-            <img v-if="dataForm.iconUrl" :src="dataForm.iconUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"/>
-          </el-upload>
         </el-form-item>
         <el-form-item label="类目图片" prop="picUrl">
           <el-upload
@@ -99,9 +74,6 @@
             <img v-if="dataForm.picUrl" :src="dataForm.picUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
-        </el-form-item>
-        <el-form-item label="类目简介" prop="desc">
-          <el-input v-model="dataForm.desc"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -167,11 +139,8 @@ export default {
       dataForm: {
         id: undefined,
         name: '',
-        keywords: '',
         level: 'L2',
         pid: undefined,
-        desc: '',
-        iconUrl: undefined,
         picUrl: undefined
       },
       dialogFormVisible: false,
@@ -225,11 +194,8 @@ export default {
       this.dataForm = {
         id: undefined,
         name: '',
-        keywords: '',
         level: 'L2',
         pid: undefined,
-        desc: '',
-        iconUrl: undefined,
         picUrl: undefined
       }
     },
@@ -250,10 +216,10 @@ export default {
       })
     },
     uploadIconUrl: function(response) {
-      this.dataForm.iconUrl = response.data.url
+      this.dataForm.iconUrl = response.data.pic
     },
     uploadPicUrl: function(response) {
-      this.dataForm.picUrl = response.data.url
+      this.dataForm.picUrl = response.data.pic
     },
     createData() {
       this.$refs['dataForm'].validate(valid => {
@@ -340,22 +306,16 @@ export default {
         const tHeader = [
           '类目ID',
           '名称',
-          '关键字',
           '级别',
           '父类目ID',
-          '类目图标',
           '类目图片',
-          '简介'
         ]
         const filterVal = [
           'id',
           'name',
-          'keywords',
           'level',
           'pid',
-          'iconUrl',
           'picUrl',
-          'desc'
         ]
         excel.export_json_to_excel2(
           tHeader,

@@ -80,7 +80,7 @@ public class GoodsService {
         return (int) goodsMapper.countByExample(example);
     }
 
-    public List<Goods> querySelective(String goodsSn, String name, Integer page, Integer limit, String sort, String order) {
+    public List<Goods> querySelective(String goodsSn, String name,String catagory, Integer page, Integer limit, String sort, String order) {
         GoodsExample example = new GoodsExample();
         GoodsExample.Criteria criteria = example.createCriteria();
 
@@ -89,6 +89,9 @@ public class GoodsService {
         }
         if (!org.springframework.util.StringUtils.isEmpty(name)) {
             criteria.andNameLike("%" + name + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(catagory)){
+            criteria.andCategoryIdEqualTo(Integer.valueOf(catagory));
         }
         criteria.andDeletedEqualTo(false);
 
@@ -105,6 +108,7 @@ public class GoodsService {
     }
 
     public int updateById(Goods goods) {
+
         goods.setUpdateTime(LocalDateTime.now());
         return goodsMapper.updateByPrimaryKeySelective(goods);
     }
@@ -125,5 +129,11 @@ public class GoodsService {
         GoodsExample example = new GoodsExample();
         example.or().andGoodsNumEqualTo(goodsNum).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
         return goodsMapper.countByExample(example) != 0;
+    }
+
+    public long countBycateId(Integer id) {
+        GoodsExample example = new GoodsExample();
+        example.or().andCategoryIdEqualTo(id).andDeletedEqualTo(false);
+        return goodsMapper.countByExample(example);
     }
 }

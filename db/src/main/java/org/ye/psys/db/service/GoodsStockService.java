@@ -20,7 +20,7 @@ public class GoodsStockService {
 
     public List findByGoodsNum(String id) {
         GoodsStockExample example = new GoodsStockExample();
-        example.or().andGoodsNumEqualTo(id);
+        example.or().andGoodsNumEqualTo(id).andDeletedEqualTo(false);
         return goodsStockMapper.selectByExample(example);
     }
 

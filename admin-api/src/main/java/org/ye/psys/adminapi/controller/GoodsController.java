@@ -52,8 +52,9 @@ public class GoodsController {
     /**
      * 查询商品
      *
-     * @param goodsSn
+     * @param goodsNum
      * @param name
+     * @param catagory
      * @param page
      * @param limit
      * @param sort
@@ -63,12 +64,12 @@ public class GoodsController {
     @RequiresPermissions("admin:goods:list")
     @RequiresPermissionsDesc(menu = {"商品管理", "商品管理"}, button = "查询")
     @GetMapping("/list")
-    public Object list(String goodsSn, String name,
+    public Object list(String goodsNum, String name, String catagory,
                        @RequestParam(defaultValue = "1") Integer page,
                        @RequestParam(defaultValue = "10") Integer limit,
                        @Sort @RequestParam(defaultValue = "create_time") String sort,
                        @Order @RequestParam(defaultValue = "desc") String order) {
-        List<Goods> goodsList = goodsService.querySelective(goodsSn, name, page, limit, sort, order);
+        List<Goods> goodsList = goodsService.querySelective(goodsNum, name, catagory, page, limit, sort, order);
         long total = PageInfo.of(goodsList).getTotal();
         Map<String, Object> data = new HashMap<>();
         data.put("total", total);
@@ -137,7 +138,7 @@ public class GoodsController {
     @GetMapping("/detail")
     public Object detail(@NotNull Integer id) {
         Goods goods = goodsService.findByGoodsNum(id.toString());
-        List<GoodsStock> Stocks = goodsStockService.findByGoodsNum(id.toString());
+        List<GoodsStock> stocks = goodsStockService.findByGoodsNum(id.toString());
         List<GoodsSpecification> specifications = goodsSpecificationService.queryByGoodsNum(id.toString());
 
         Integer categoryId = goods.getCategoryId();
@@ -151,7 +152,7 @@ public class GoodsController {
         Map<String, Object> data = new HashMap<>();
         data.put("goods", goods);
         data.put("specifications", specifications);
-        data.put("Stocks", Stocks);
+        data.put("stocks", stocks);
         data.put("categoryIds", categoryIds);
 
         return ResponseUtil.ok(data);
@@ -166,8 +167,8 @@ public class GoodsController {
     @RequiresPermissionsDesc(menu = {"参谋", "数据分析"}, button = "销售排行榜")
     @PostMapping("/data")
     public Object data(@RequestBody String body) {
-        Integer isSingle = JacksonUtil.parseInteger(body,"isSingle");
-        Integer time = JacksonUtil.parseInteger(body,"time");
+        Integer isSingle = JacksonUtil.parseInteger(body, "isSingle");
+        Integer time = JacksonUtil.parseInteger(body, "time");
         List list = new ArrayList();
 
         long end = System.currentTimeMillis();
@@ -192,8 +193,8 @@ public class GoodsController {
                 BigDecimal total = (BigDecimal) map.get("total");
                 Goods goods = goodsService.findByGoodsNum(goodsN);
                 Map temp = new HashedMap();
-                temp.put("newName",goods.getName());
-                temp.put("total",total);
+                temp.put("newName", goods.getName());
+                temp.put("total", total);
                 nList.add(temp);
             }
             list = nList;

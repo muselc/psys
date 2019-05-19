@@ -35,17 +35,13 @@ public class AdminGoodsService {
     @Autowired
     private GoodsStockService productService;
     @Autowired
-    private CartService cartService;
-    @Autowired
-    private OrderGoodsService orderGoodsService;
-    @Autowired
     private CategoryService categoryService;
 
     
 
-    public Object list(String goodsSn, String name,
+    public Object list(String goodsNum, String name,String catagory,
                        Integer page, Integer limit, String sort, String order) {
-        List<Goods> goodsList = goodsService.querySelective(goodsSn, name, page, limit, sort, order);
+        List<Goods> goodsList = goodsService.querySelective(goodsNum, name,catagory, page, limit, sort, order);
         long total = PageInfo.of(goodsList).getTotal();
         Map<String, Object> data = new HashMap<>();
         data.put("total", total);
@@ -150,7 +146,7 @@ public class AdminGoodsService {
             specificationService.add(specification);
         }
 
-        // 商品货品表_product
+        // 商品货品表_stock
         for (GoodsStock product : products) {
             product.setGoodsNum(goods.getId().toString());
             productService.add(product);
@@ -193,6 +189,7 @@ public class AdminGoodsService {
             return ResponseUtil.fail( "商品名已经存在");
         }
 
+        goods.setId(Integer.valueOf(goodsNum));
         // 商品基本信息表_goods
         goodsService.add(goods);
 

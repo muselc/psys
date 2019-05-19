@@ -65,7 +65,7 @@
       <el-table-column align="center" label="操作" width="200" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleReply(scope.row)">回复</el-button>
-          <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
+          <!-- <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>

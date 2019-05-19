@@ -3,9 +3,11 @@
 
     <!-- 查询和其他操作 -->
     <div class="filter-container">
+      <el-input v-model="listQuery.catagory" clearable class="filter-item" style="width: 200px;" placeholder="请输入商品类目id"/>
       <el-input v-model="listQuery.goodsNum" clearable class="filter-item" style="width: 200px;" placeholder="请输入商品编号"/>
       <el-input v-model="listQuery.name" clearable class="filter-item" style="width: 200px;" placeholder="请输入商品名称"/>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
+      
+      <el-button v-permission="['GET /admin/goofd/list']" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
       <el-button v-permission="['POST /admin/goods/create']" class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
       <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">导出</el-button>
     </div>
@@ -20,19 +22,13 @@
               <img v-for="pic in props.row.gallery" :key="pic" :src="pic" class="gallery">
             </el-form-item>
             <el-form-item label="商品介绍">
-              <span>{{ props.row.brief }}</span>
-            </el-form-item>
-            <el-form-item label="商品单位">
-              <span>{{ props.row.unit }}</span>
+              <span>{{ props.row.summary }}</span>
             </el-form-item>
             <el-form-item label="关键字">
-              <span>{{ props.row.keywords }}</span>
+              <span>{{ props.row.keyword }}</span>
             </el-form-item>
             <el-form-item label="类目ID">
               <span>{{ props.row.categoryId }}</span>
-            </el-form-item>
-            <el-form-item label="品牌商ID">
-              <span>{{ props.row.brandId }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -132,6 +128,7 @@ export default {
         limit: 20,
         goodsNum: undefined,
         name: undefined,
+        category: undefined,
         sort: 'create_time',
         order: 'desc'
       },
@@ -188,8 +185,8 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['商品ID', '商品编号', '名称', '专柜价格', '当前价格', '是否新品', '是否热品', '是否在售', '首页主图', '宣传图片列表', '商品介绍', '详细介绍', '商品图片', '商品单位', '关键字', '类目ID']
-        const filterVal = ['id', 'goodsNum', 'name', 'orignalPrice', 'currentPrice', 'isNew', 'isHot', 'isOnSale', 'listPicUrl', 'gallery', 'brief', 'detail', 'picUrl', 'goodsUnit', 'keywords', 'categoryId']
+        const tHeader = ['商品ID', '商品编号', '名称', '专柜价格', '当前价格', '是否新品', '是否热品', '是否在售', '首页主图', '宣传图片列表', '商品介绍', '详细介绍', '商品图片', '关键字', '类目ID']
+        const filterVal = ['id', 'goodsNum', 'name', 'orignalPrice', 'currentPrice', 'isNew', 'isHot', 'isOnSale', 'listPicUrl', 'gallery', 'summary', 'detail', 'picUrl',  'keywords', 'categoryId']
         excel.export_json_to_excel2(tHeader, this.list, filterVal, '商品信息')
         this.downloadLoading = false
       })

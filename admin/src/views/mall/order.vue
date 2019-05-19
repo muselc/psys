@@ -149,9 +149,7 @@
           <span>
             (实际费用){{ orderDetail.order.actualPrice }}元 =
             (商品总价){{ orderDetail.order.goodsPrice }}元 +
-            (快递费用){{ orderDetail.order.freightPrice }}元 -
-            (优惠减免){{ orderDetail.order.couponPrice }}元 -
-            (积分减免){{ orderDetail.order.integralPrice }}元
+            (快递费用){{ orderDetail.order.freightPrice }}元 
           </span>
         </el-form-item>
         <el-form-item label="支付信息">

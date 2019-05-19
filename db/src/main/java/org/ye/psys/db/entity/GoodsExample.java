@@ -994,17 +994,17 @@ public class GoodsExample {
         }
 
         public Criteria andKeywordIsNull() {
-            addCriterion("keyWord is null");
+            addCriterion("keyword is null");
             return (Criteria) this;
         }
 
         public Criteria andKeywordIsNotNull() {
-            addCriterion("keyWord is not null");
+            addCriterion("keyword is not null");
             return (Criteria) this;
         }
 
         public Criteria andKeywordEqualTo(String value) {
-            addCriterion("keyWord =", value, "keyword");
+            addCriterion("keyword =", value, "keyword");
             return (Criteria) this;
         }
 
@@ -1016,12 +1016,12 @@ public class GoodsExample {
          * @project https://github.com/itfsw/mybatis-generator-plugin
          */
         public Criteria andKeywordEqualToColumn(Goods.Column column) {
-            addCriterion(new StringBuilder("keyWord = ").append(column.getEscapedColumnName()).toString());
+            addCriterion(new StringBuilder("keyword = ").append(column.getEscapedColumnName()).toString());
             return (Criteria) this;
         }
 
         public Criteria andKeywordNotEqualTo(String value) {
-            addCriterion("keyWord <>", value, "keyword");
+            addCriterion("keyword <>", value, "keyword");
             return (Criteria) this;
         }
 
@@ -1033,12 +1033,12 @@ public class GoodsExample {
          * @project https://github.com/itfsw/mybatis-generator-plugin
          */
         public Criteria andKeywordNotEqualToColumn(Goods.Column column) {
-            addCriterion(new StringBuilder("keyWord <> ").append(column.getEscapedColumnName()).toString());
+            addCriterion(new StringBuilder("keyword <> ").append(column.getEscapedColumnName()).toString());
             return (Criteria) this;
         }
 
         public Criteria andKeywordGreaterThan(String value) {
-            addCriterion("keyWord >", value, "keyword");
+            addCriterion("keyword >", value, "keyword");
             return (Criteria) this;
         }
 
@@ -1050,12 +1050,12 @@ public class GoodsExample {
          * @project https://github.com/itfsw/mybatis-generator-plugin
          */
         public Criteria andKeywordGreaterThanColumn(Goods.Column column) {
-            addCriterion(new StringBuilder("keyWord > ").append(column.getEscapedColumnName()).toString());
+            addCriterion(new StringBuilder("keyword > ").append(column.getEscapedColumnName()).toString());
             return (Criteria) this;
         }
 
         public Criteria andKeywordGreaterThanOrEqualTo(String value) {
-            addCriterion("keyWord >=", value, "keyword");
+            addCriterion("keyword >=", value, "keyword");
             return (Criteria) this;
         }
 
@@ -1067,12 +1067,12 @@ public class GoodsExample {
          * @project https://github.com/itfsw/mybatis-generator-plugin
          */
         public Criteria andKeywordGreaterThanOrEqualToColumn(Goods.Column column) {
-            addCriterion(new StringBuilder("keyWord >= ").append(column.getEscapedColumnName()).toString());
+            addCriterion(new StringBuilder("keyword >= ").append(column.getEscapedColumnName()).toString());
             return (Criteria) this;
         }
 
         public Criteria andKeywordLessThan(String value) {
-            addCriterion("keyWord <", value, "keyword");
+            addCriterion("keyword <", value, "keyword");
             return (Criteria) this;
         }
 
@@ -1084,12 +1084,12 @@ public class GoodsExample {
          * @project https://github.com/itfsw/mybatis-generator-plugin
          */
         public Criteria andKeywordLessThanColumn(Goods.Column column) {
-            addCriterion(new StringBuilder("keyWord < ").append(column.getEscapedColumnName()).toString());
+            addCriterion(new StringBuilder("keyword < ").append(column.getEscapedColumnName()).toString());
             return (Criteria) this;
         }
 
         public Criteria andKeywordLessThanOrEqualTo(String value) {
-            addCriterion("keyWord <=", value, "keyword");
+            addCriterion("keyword <=", value, "keyword");
             return (Criteria) this;
         }
 
@@ -1101,37 +1101,37 @@ public class GoodsExample {
          * @project https://github.com/itfsw/mybatis-generator-plugin
          */
         public Criteria andKeywordLessThanOrEqualToColumn(Goods.Column column) {
-            addCriterion(new StringBuilder("keyWord <= ").append(column.getEscapedColumnName()).toString());
+            addCriterion(new StringBuilder("keyword <= ").append(column.getEscapedColumnName()).toString());
             return (Criteria) this;
         }
 
         public Criteria andKeywordLike(String value) {
-            addCriterion("keyWord like", value, "keyword");
+            addCriterion("keyword like", value, "keyword");
             return (Criteria) this;
         }
 
         public Criteria andKeywordNotLike(String value) {
-            addCriterion("keyWord not like", value, "keyword");
+            addCriterion("keyword not like", value, "keyword");
             return (Criteria) this;
         }
 
         public Criteria andKeywordIn(List<String> values) {
-            addCriterion("keyWord in", values, "keyword");
+            addCriterion("keyword in", values, "keyword");
             return (Criteria) this;
         }
 
         public Criteria andKeywordNotIn(List<String> values) {
-            addCriterion("keyWord not in", values, "keyword");
+            addCriterion("keyword not in", values, "keyword");
             return (Criteria) this;
         }
 
         public Criteria andKeywordBetween(String value1, String value2) {
-            addCriterion("keyWord between", value1, value2, "keyword");
+            addCriterion("keyword between", value1, value2, "keyword");
             return (Criteria) this;
         }
 
         public Criteria andKeywordNotBetween(String value1, String value2) {
-            addCriterion("keyWord not between", value1, value2, "keyword");
+            addCriterion("keyword not between", value1, value2, "keyword");
             return (Criteria) this;
         }
 

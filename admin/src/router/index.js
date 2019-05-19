@@ -310,16 +310,6 @@ export const asyncRouterMap = [
           title: '角色管理',
           noCache: true
         }
-      },
-      {
-        path: 'os',
-        component: () => import('@/views/sys/os'),
-        name: 'os',
-        meta: {
-          perms: ['GET /admin/os/list', 'POST /admin/os/create', 'POST /admin/os/update', 'POST /admin/os/delete'],
-          title: '对象存储',
-          noCache: true
-        }
       }
     ]
   },

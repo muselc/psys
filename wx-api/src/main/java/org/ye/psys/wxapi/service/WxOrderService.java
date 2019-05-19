@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.ye.psys.core.config.Kd;
 import org.ye.psys.core.config.KdApiOrderDistinguish;
+import org.ye.psys.core.system.SystemConfig;
 import org.ye.psys.core.util.JacksonUtil;
 import org.ye.psys.core.util.OrderUtil;
 import org.ye.psys.core.util.ResponseUtil;
@@ -59,9 +60,9 @@ public class WxOrderService {
     private UserFormidService userFormidService;
 
     @Autowired
-    private CommentService commentService;
-    @Autowired
     private Kd kd;
+    @Autowired
+    private SystemService systemService;
 
     /**
      * 订单列表
@@ -167,8 +168,10 @@ public class WxOrderService {
         String detailedAddress = detailedAddress(address);
         order.setAddress(detailedAddress);
         order.setGoodsPrice(checkedGoodsPrice);
+        if (orderTotalPrice.doubleValue() < systemService.findByKName(SystemConfig.MALL_EXPRESS_FREIGHT_MIN)){
+            freightPrice = new BigDecimal(systemService.findByKName(SystemConfig.MALL_EXPRESS_FREIGHT_VALUE));
+        }
         order.setFreightPrice(freightPrice);
-        order.setOrderPrice(orderTotalPrice);
         order.setActualPrice(orderTotalPrice);
 
         ordersService.add(order);
@@ -453,6 +456,7 @@ public class WxOrderService {
             return ResponseUtil.fail("openId缺失，订单不能支付");
         }
         order.setOrderStatus(OrderUtil.STATUS_PAY);
+        order.setPayTime(LocalDateTime.now());
         ordersService.update(order);
         return ResponseUtil.ok();
 

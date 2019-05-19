@@ -1,13 +1,15 @@
 package org.ye.psys.core.util;
 
 
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-
+@Component
 public class UserTokenManager {
-    private static Map<String, UserToken> tokenMap = new HashMap<>();
-    private static Map<Integer, UserToken> idMap = new HashMap<>();
+    public static Map<String, UserToken> tokenMap = new HashMap<>();
+    public static Map<Integer, UserToken> idMap = new HashMap<>();
 
     public static Integer getUserId(String token) {
         UserToken userToken = tokenMap.get(token);

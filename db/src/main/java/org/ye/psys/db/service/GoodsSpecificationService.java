@@ -60,7 +60,7 @@ public class GoodsSpecificationService {
 
     public List<GoodsSpecification> queryByGoodsNum(String id) {
         GoodsSpecificationExample example = new GoodsSpecificationExample();
-        example.or().andGoodsNumEqualTo(id).andDeleteEqualTo(false);
+        example.or().andGoodsNumEqualTo(id).andDeletedEqualTo(false);
         return goodsSpecificationMapper.selectByExample(example);
     }
 

@@ -13,7 +13,9 @@ import org.ye.psys.core.util.ResponseUtil;
 import org.ye.psys.core.validator.Order;
 import org.ye.psys.core.validator.Sort;
 import org.ye.psys.db.entity.Category;
+import org.ye.psys.db.entity.Goods;
 import org.ye.psys.db.service.CategoryService;
+import org.ye.psys.db.service.GoodsService;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private GoodsService goodsService;
 
     @RequiresPermissions("admin:category:list")
     @RequiresPermissionsDesc(menu={"商场管理" , "类目管理"}, button="查询")
@@ -111,6 +115,20 @@ public class CategoryController {
         Integer id = category.getId();
         if (id == null) {
             return ResponseUtil.badArgument();
+        }
+        //一级目录
+        if (category.getLevel().equals("L1")) {
+            List<Category> categoryList = categoryService.findByPid(id);
+            if (categoryList.size() > 0) {
+                return ResponseUtil.fail("请先删除上级类目");
+            }
+        }
+        //二级目录
+        if (category.getLevel().equals("L2")) {
+            long count = goodsService.countBycateId(id);
+            if (count > 0) {
+                return ResponseUtil.fail("请先删除该类目下的商品");
+            }
         }
         categoryService.deleteById(id);
         return ResponseUtil.ok();

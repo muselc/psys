@@ -129,4 +129,6 @@ public interface AreaMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Area record);
+
+    void updateValueById(@Param("id") int id, @Param("value") int value);
 }

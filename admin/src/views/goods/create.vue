@@ -67,12 +67,12 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item label="商品单位">
+        <!-- <el-form-item label="商品单位">
           <el-input v-model="goods.unit" placeholder="件 / 个 / 盒"/>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item label="关键字">
-          <el-tag v-for="tag in keywords" :key="tag" closable type="primary" @close="handleClose(tag)">
+          <el-tag v-for="tag in keyword" :key="tag" closable type="primary" @close="handleClose(tag)">
             {{ tag }}
           </el-tag>
           <el-input
@@ -91,7 +91,7 @@
         </el-form-item>
 
         <el-form-item label="商品简介">
-          <el-input v-model="goods.brief"/>
+          <el-input v-model="goods.summary"/>
         </el-form-item>
 
         <el-form-item label="商品详细介绍">
@@ -185,11 +185,11 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column property="price" width="100" label="货品售价"/>
+        <el-table-column property="curPrice" width="100" label="货品售价"/>
         <el-table-column property="count" width="100" label="货品数量"/>
-        <el-table-column property="url" width="100" label="货品图片">
+        <el-table-column property="pic" width="100" label="货品图片">
           <template slot-scope="scope">
-            <img v-if="scope.row.url" :src="scope.row.url" width="40">
+            <img v-if="scope.row.pic" :src="scope.row.pic" width="40">
           </template>
         </el-table-column>
         <el-table-column align="center" label="操作" width="100" class-name="small-padding fixed-width">
@@ -212,13 +212,13 @@
               {{ tag }}
             </el-tag>
           </el-form-item>
-          <el-form-item label="货品售价" prop="price">
+          <el-form-item label="货品售价" prop="curPrice">
             <el-input v-model="productForm.curPrice"/>
           </el-form-item>
           <el-form-item label="货品数量" prop="count">
             <el-input v-model="productForm.count"/>
           </el-form-item>
-          <el-form-item label="货品图片" prop="url">
+          <el-form-item label="货品图片" prop="pic">
             <el-upload
               :action="uploadPath"
               :show-file-list="false"
@@ -226,7 +226,7 @@
               :on-success="uploadProductUrl"
               class="avatar-uploader"
               accept=".jpg,.jpeg,.png,.gif">
-              <img v-if="productForm.url" :src="productForm.url" class="avatar">
+              <img v-if="productForm.pic" :src="productForm.pic" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"/>
             </el-upload>
           </el-form-item>
@@ -238,7 +238,7 @@
       </el-dialog>
     </el-card>
 
-    <el-card class="box-card">
+    <!-- <el-card class="box-card">
       <h3>商品参数</h3>
       <el-button :plain="true" type="primary" @click="handleAttributeShow">添加</el-button>
       <el-table :data="attributes">
@@ -271,7 +271,7 @@
           <el-button type="primary" @click="handleAttributeAdd">确定</el-button>
         </div>
       </el-dialog>
-    </el-card>
+    </el-card> -->
 
     <div class="op-container">
       <el-button @click="handleCancel">取消</el-button>
@@ -342,7 +342,7 @@ export default {
       uploadPath,
       newKeywordVisible: false,
       newKeyword: '',
-      keywords: [],
+      keyword: [],
       categoryList: [],
       goods: { picUrl: '', gallery: [] },
       specVisiable: false,
@@ -350,8 +350,8 @@ export default {
       multipleSpec: false,
       specifications: [{ specification: '规格', value: '标准', picUrl: '' }],
       productVisiable: false,
-      productForm: { id: 0, specifications: [], curPrice: 0.00, count: 0, url: '' },
-      products: [{ id: 0, specifications: ['标准'], curPrice: 0.00, count: 0, url: '' }],
+      productForm: { id: 0, specifications: [], curPrice: 0.00, count: 0, pic: '' },
+      products: [{ id: 0, specifications: ['标准'], curPrice: 0.00, count: 0, pic: '' }],
       attributeVisiable: false,
       attributeForm: { attribute: '', value: '' },
       attributes: [],
@@ -368,7 +368,7 @@ export default {
           const formData = new FormData()
           formData.append('file', blobInfo.blob())
           createStorage(formData).then(res => {
-            success(res.data.data.url)
+            success(res.data.data.pic)
           }).catch(() => {
             failure('上传失败，请重新上传')
           })
@@ -420,8 +420,8 @@ export default {
       })
     },
     handleClose(tag) {
-      this.keywords.splice(this.keywords.indexOf(tag), 1)
-      this.goods.keywords = this.keywords.toString()
+      this.keyword.splice(this.keyword.indexOf(tag), 1)
+      this.goods.keyword = this.keyword.toString()
     },
     showInput() {
       this.newKeywordVisible = true
@@ -432,14 +432,14 @@ export default {
     handleInputConfirm() {
       const newKeyword = this.newKeyword
       if (newKeyword) {
-        this.keywords.push(newKeyword)
-        this.goods.keywords = this.keywords.toString()
+        this.keyword.push(newKeyword)
+        this.goods.keyword = this.keyword.toString()
       }
       this.newKeywordVisible = false
       this.newKeyword = ''
     },
     uploadPicUrl: function(response) {
-      this.goods.picUrl = response.data.url
+      this.goods.picUrl = response.data.pic
     },
     uploadOverrun: function() {
       this.$message({
@@ -449,7 +449,7 @@ export default {
     },
     handleGalleryUrl(response, file, fileList) {
       if (response.errno === 0) {
-        this.goods.gallery.push(response.data.url)
+        this.goods.gallery.push(response.data.pic)
       }
     },
     handleRemove: function(file, fileList) {
@@ -458,14 +458,14 @@ export default {
         // 1. 如果所删除图片是刚刚上传的图片，那么图片地址是file.response.data.url
         //    此时的file.url虽然存在，但是是本机地址，而不是远程地址。
         // 2. 如果所删除图片是后台返回的已有图片，那么图片地址是file.url
-        var url
+        var pic
         if (file.response === undefined) {
-          url = file.url
+          pic = file.pic
         } else {
-          url = file.response.data.url
+          pic = file.response.data.pic
         }
 
-        if (this.goods.gallery[i] === url) {
+        if (this.goods.gallery[i] === pic) {
           this.goods.gallery.splice(i, 1)
         }
       }
@@ -473,14 +473,14 @@ export default {
     specChanged: function(label) {
       if (label === false) {
         this.specifications = [{ specification: '规格', value: '标准', picUrl: '' }]
-        this.products = [{ id: 0, specifications: ['标准'], curPrice: 0.00, count: 0, url: '' }]
+        this.products = [{ id: 0, specifications: ['标准'], curPrice: 0.00, count: 0, pic: '' }]
       } else {
         this.specifications = []
         this.products = []
       }
     },
     uploadSpecPicUrl: function(response) {
-      this.specForm.picUrl = response.data.url
+      this.specForm.picUrl = response.data.pic
     },
     handleSpecificationShow() {
       this.specForm = { specification: '', value: '', picUrl: '' }
@@ -546,7 +546,7 @@ export default {
           var z = specValues[x][combination[x]]
           specifications.push(this.specifications[z].value)
         }
-        products[productsIndex] = { id: productsIndex, specifications: specifications, curPrice: 0.00, count: 0, url: '' }
+        products[productsIndex] = { id: productsIndex, specifications: specifications, curPrice: 0.00, count: 0, pic: '' }
         productsIndex++
 
         index++
@@ -575,7 +575,7 @@ export default {
       this.productVisiable = true
     },
     uploadProductUrl: function(response) {
-      this.productForm.url = response.data.url
+      this.productForm.pic = response.data.pic
     },
     handleProductEdit() {
       for (var i = 0; i < this.products.length; i++) {

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ye.psys.adminapi.annotation.RequiresPermissionsDesc;
+import org.ye.psys.core.util.JacksonUtil;
 import org.ye.psys.core.util.ResponseUtil;
 import org.ye.psys.core.validator.Order;
 import org.ye.psys.core.validator.Sort;
@@ -62,9 +63,9 @@ public class AreaController {
     @RequiresPermissionsDesc(menu={"参谋" , "数据分析"}, button="区域分布")
     @GetMapping("/areaData")
     public Object areaData() {
-        List<Map> areaList = new ArrayList<>();
 
-        List<Area> a = areaService.findByType(1);
+        List<Map> areaList = new ArrayList<>();
+        List<Area> a = areaService.findByType(2);
         for (Area area : a) {
             Map<String, String> areaData = new HashMap<>();
             areaData.put("name", area.getName());
@@ -76,5 +77,7 @@ public class AreaController {
         data.put("area", areaList);
         return ResponseUtil.ok(data);
     }
+
+
 
 }

@@ -202,7 +202,7 @@ export default {
       }
     },
     uploadAvatar: function(response) {
-      this.dataForm.avatar = response.data.url
+      this.dataForm.avatar = response.data.pic
     },
     handleCreate() {
       this.resetForm()

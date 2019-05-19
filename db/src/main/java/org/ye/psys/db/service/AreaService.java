@@ -58,4 +58,8 @@ public class AreaService {
         areaMapper.updateByPrimaryKey(area);
         return ;
     }
+
+    public void updateValueById(int id, int value) {
+        areaMapper.updateValueById(id,value);
+    }
 }

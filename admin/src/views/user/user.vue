@@ -3,10 +3,9 @@
 
     <!-- 查询和其他操作 -->
     <div class="filter-container">
-      <el-input v-model="listQuery.username" clearable class="filter-item" style="width: 200px;" placeholder="请输入用户名"/>
+      <el-input v-model="listQuery.nickname" clearable class="filter-item" style="width: 200px;" placeholder="请输入用户名"/>
       <el-input v-model="listQuery.mobile" clearable class="filter-item" style="width: 200px;" placeholder="请输入手机号"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
-      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
       <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">导出</el-button>
     </div>
 
@@ -14,7 +13,7 @@
     <el-table v-loading="listLoading" :data="list" size="small" element-loading-text="正在查询中。。。" border fit highlight-current-row>
       <el-table-column align="center" width="100px" label="用户ID" prop="id" sortable/>
 
-      <el-table-column align="center" label="用户名" prop="username"/>
+      <el-table-column align="center" label="用户名" prop="nickname"/>
 
       <el-table-column align="center" label="手机号码" prop="mobile"/>
 
@@ -51,15 +50,13 @@
     <!-- 添加或修改对话框 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="dataForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="dataForm.username"/>
+        <el-form-item label="用户名" prop="nickname">
+          <el-input :disabled="true" v-model="dataForm.nickname"/>
         </el-form-item>
         <el-form-item label="手机号码" prop="mobile">
           <el-input v-model="dataForm.mobile"/>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="dataForm.password" type="password" auto-complete="off"/>
-        </el-form-item>
+       
         <el-form-item label="性别" prop="gender">
           <el-select v-model="dataForm.gender">
             <el-option :value="0" label="未知"/>
@@ -73,15 +70,12 @@
         <el-form-item label="用户等级" prop="userLevel">
           <el-select v-model="dataForm.userLevel">
             <el-option :value="0" label="普通用户"/>
-            <el-option :value="1" label="VIP用户"/>
-            <el-option :value="2" label="高级VIP用户"/>
           </el-select>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-select v-model="dataForm.status">
-            <el-option :value="0" label="可用"/>
-            <el-option :value="1" label="禁用"/>
-            <el-option :value="2" label="注销"/>
+            <el-option :value="0" label="离线"/>
+            <el-option :value="1" label="在线"/>
           </el-select>
         </el-form-item>
       </el-form>
@@ -110,16 +104,15 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        username: undefined,
+        nickname: undefined,
         mobile: undefined,
         sort: 'create_time',
         order: 'desc'
       },
       dataForm: {
         id: undefined,
-        username: '',
+        nickname: '',
         mobile: '',
-        password: undefined,
         gender: 0,
         userLevel: 0,
         birthday: undefined,
@@ -132,14 +125,13 @@ export default {
         create: '创建'
       },
       rules: {
-        username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
-        mobile: [{ required: true, message: '手机号码不能为空', trigger: 'blur' }],
-        password: [{ required: true, message: '密码不能为空', trigger: 'blur' }]
+        nickname: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
+        mobile: [{ required: true, message: '手机号码不能为空', trigger: 'blur' }]
       },
       downloadLoading: false,
       genderDic: ['未知', '男', '女'],
-      levelDic: ['普通用户', 'VIP用户', '高级VIP用户'],
-      statusDic: ['可用', '禁用', '注销']
+      levelDic: ['普通用户'],
+      statusDic: ['离线', '在线']
     }
   },
   created() {
@@ -165,23 +157,14 @@ export default {
     resetForm() {
       this.dataForm = {
         id: undefined,
-        username: '',
+        nickname: '',
         mobile: '',
-        pass: undefined,
         checkPass: undefined,
         gender: 0,
         userLevel: 0,
         birthday: undefined,
         status: 0
       }
-    },
-    handleCreate() {
-      this.resetForm()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -245,7 +228,7 @@ export default {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['用户名', '手机号码', '性别', '生日', '状态']
-        const filterVal = ['username', 'mobile', 'gender', 'birthday', 'status']
+        const filterVal = ['nickname', 'mobile', 'gender', 'birthday', 'status']
         excel.export_json_to_excel2(tHeader, this.list, filterVal, '用户信息')
         this.downloadLoading = false
       })

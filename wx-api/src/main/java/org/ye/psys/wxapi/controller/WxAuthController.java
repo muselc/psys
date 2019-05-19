@@ -67,8 +67,6 @@ public class WxAuthController {
         User user = userService.findByWxId(openId);
         if (user == null) {
             user = new User();
-            user.setUsername(openId);
-            user.setPassword(openId);
             user.setWeixinOpenid(openId);
             user.setAvatar(userInfo.getAvatarUrl());
             user.setNickname(userInfo.getNickName());
