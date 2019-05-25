@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.ye.psys.adminapi.annotation.RequiresPermissionsDesc;
 import org.ye.psys.adminapi.service.AdminOrderService;
-import org.ye.psys.core.config.Kd;
 import org.ye.psys.core.validator.Order;
 import org.ye.psys.core.validator.Sort;
 
@@ -17,11 +16,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/order")
-public class OrderController {
-    private final Log logger = LogFactory.getLog(OrderController.class);
+public class AdminOrderController {
+    private final Log logger = LogFactory.getLog(AdminOrderController.class);
 
     @Autowired
     private AdminOrderService adminOrderService;
+
 
     /**
      * 查询订单
@@ -66,12 +66,12 @@ public class OrderController {
      * @param body 订单信息，{ orderId：xxx }
      * @return 订单退款操作结果
      */
-//    @RequiresPermissions("admin:order:refund")
-//    @RequiresPermissionsDesc(menu = {"商场管理", "订单管理"}, button = "订单退款")
-//    @PostMapping("/refund")
-//    public Object refund(@RequestBody String body) {
-//        return ordersService.refund(body);
-//    }
+    @RequiresPermissions("admin:order:refund")
+    @RequiresPermissionsDesc(menu = {"商场管理", "订单管理"}, button = "订单退款")
+    @PostMapping("/refund")
+    public Object refund(@RequestBody String body) {
+        return adminOrderService.refund(body);
+    }
 
     /**
      * 发货
@@ -107,5 +107,6 @@ public class OrderController {
     public Object ss(@RequestBody String body ) {
         return adminOrderService.kdInfo(body);
     }
+
 
 }

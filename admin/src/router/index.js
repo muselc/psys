@@ -94,7 +94,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/user/user'),
         name: 'user',
         meta: {
-          perms: ['GET /admin/user/list', 'POST /admin/user/create', 'POST /admin/user/update'],
+          perms: ['GET /admin/user/list', 'POST /admin/user/update'],
           title: '会员管理',
           noCache: true
         }
@@ -139,6 +139,7 @@ export const asyncRouterMap = [
         name: 'area',
         meta: {
           title: '行政区域',
+          perms: ['GET /admin/area/list'],
           noCache: true
         }
       },
@@ -157,7 +158,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/mall/order'),
         name: 'order',
         meta: {
-          perms: ['GET /admin/order/list', 'GET /admin/order/detail', 'POST /admin/order/ordership', 'POST /admin/order/orderrefund', 'POST /admin/order/orderreply'],
+          perms: ['GET /admin/order/list', 'GET /admin/order/detail', 'POST /admin/order/ship', 'POST /admin/order/refund'],
           title: '订单管理',
           noCache: true
         }
@@ -230,7 +231,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/goods/comment'),
         name: 'goodsComment',
         meta: {
-          perms: ['GET /admin/goods/list', 'GET /admin/comment/list', 'POST /admin/comment/delete'],
+          perms: ['GET /admin/goods/list', 'GET /admin/comment/list', 'POST /admin/comment/delete', 'POST admin/comment/reply'],
           title: '商品评论',
           noCache: true
         }
@@ -253,7 +254,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/dataAnalysis/area'),
         name: 'area',
         meta: {
-          perms: ['GET /admin/goods/list', 'GET admin/area/dataArea'],
+          perms: ['POST /admin/goods/data', 'GET admin/area/dataArea'],
           title: '地域分布',
           noCache: true
         }
@@ -263,8 +264,8 @@ export const asyncRouterMap = [
         component: () => import('@/views/dataAnalysis/age'),
         name: 'age',
         meta: {
-          perms: ['GET /admin/goods/list', 'GET admin/user/ageandsex'],
-          title: '年龄和性别分布',
+          perms: ['GET admin/user/ageandsex'],
+          title: '性别分布',
           noCache: true
         }
       },
@@ -273,7 +274,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/dataAnalysis/rank'),
         name: 'rank',
         meta: {
-          perms: ['GET /admin/goods/list', 'POST admin/goods/data'],
+          perms: ['POST admin/goods/data'],
           title: '销售排行榜',
           noCache: true
         }
@@ -296,7 +297,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/sys/admin'),
         name: 'admin',
         meta: {
-          perms: ['GET /admin/admin/list', 'POST /admin/admin/create', 'POST /admin/admin/update', 'POST /admin/admin/delete'],
+          perms: ['GET /admin/admin/list', 'POST /admin/admin/create', 'POST /admin/admin/update', 'POST /admin/admin/delete', 'GET /admin/admin/read'],
           title: '管理员',
           noCache: true
         }

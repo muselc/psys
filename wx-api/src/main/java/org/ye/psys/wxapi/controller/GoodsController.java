@@ -39,6 +39,8 @@ public class GoodsController {
 
     @Autowired
     private GoodsStockService goodsStockService;
+    @Autowired
+    private IssueService issueService;
 
     private final static ArrayBlockingQueue<Runnable> WORK_QUEUE = new ArrayBlockingQueue<>(9);
 
@@ -94,17 +96,22 @@ public class GoodsController {
         Callable<Object> objectCallable = () -> goodsSpecificationService.getSpecificationList(id);
         //商品规格对应对库存和价格
         Callable<List> stockCallable = () -> goodsStockService.findByGoodsNum(id);
+        //常见问题
+        Callable<List> issueCallable = () -> issueService.query();
         FutureTask<Object> objectCallableTask = new FutureTask<>(objectCallable);
 
         FutureTask<List> stockCallableTask = new FutureTask<>(stockCallable);
+        FutureTask<List> issueCallableTask = new FutureTask<>(issueCallable);
 
         executorService.submit(objectCallableTask);
         executorService.submit(stockCallableTask);
+        executorService.submit(issueCallableTask);
         Map<String, Object> data = new HashMap<>();
         try {
             data.put("info", info);
             data.put("specificationList", objectCallableTask.get());
             data.put("stockList", stockCallableTask.get());
+            data.put("issueList",issueCallableTask.get());
         } catch (Exception e) {
             e.printStackTrace();
         }

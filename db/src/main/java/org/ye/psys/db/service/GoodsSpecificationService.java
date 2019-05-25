@@ -48,7 +48,7 @@ public class GoodsSpecificationService {
 
     private List<GoodsSpecification> findByGoodsNum(String id) {
         GoodsSpecificationExample example = new GoodsSpecificationExample();
-        example.or().andGoodsNumEqualTo(id);
+        example.or().andGoodsNumEqualTo(id).andDeletedEqualTo(false);
         return goodsSpecificationMapper.selectByExample(example);
     }
 

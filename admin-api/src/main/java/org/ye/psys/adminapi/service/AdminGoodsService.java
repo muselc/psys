@@ -56,10 +56,6 @@ public class AdminGoodsService {
         if (StringUtils.isEmpty(name)) {
             return ResponseUtil.badArgument();
         }
-        String goodsSn = goods.getGoodsNum();
-        if (StringUtils.isEmpty(goodsSn)) {
-            return ResponseUtil.badArgument();
-        }
         
         // 分类可以不设置，如果设置则需要验证分类存在
         Integer categoryId = goods.getCategoryId();
@@ -105,18 +101,11 @@ public class AdminGoodsService {
     /**
      * 编辑商品
      * <p>
-     * TODO
      * 目前商品修改的逻辑是
      * 1. 更新_goods表
      * 2. 逻辑删除_goods_specification、_goods_product
      * 3. 添加_goods_specification、_goods_product
      * <p>
-     * 这里商品三个表的数据采用删除再添加的策略是因为
-     * 商品编辑页面，支持管理员添加删除商品规格、添加删除商品属性，因此这里仅仅更新是不可能的，
-     * 只能删除三个表旧的数据，然后添加新的数据。
-     * 但是这里又会引入新的问题，就是存在订单商品货品ID指向了失效的商品货品表。
-     * 因此这里会拒绝管理员编辑商品，如果订单或购物车中存在商品。
-     * 所以这里可能需要重新设计。
      */
     @Transactional
     public Object update(GoodsAllinone goodsAllinone) {
@@ -180,19 +169,15 @@ public class AdminGoodsService {
         GoodsSpecification[] specifications = goodsAllinone.getSpecifications();
         GoodsStock[] products = goodsAllinone.getProducts();
 
-        String goodsNum = goods.getGoodsNum();
-        if (goodsService.checkExistByGoodsNum(goodsNum)){
-            return ResponseUtil.fail( "商品编号重复");
-        }
         String name = goods.getName();
         if (goodsService.checkExistByName(name)) {
             return ResponseUtil.fail( "商品名已经存在");
         }
 
-        goods.setId(Integer.valueOf(goodsNum));
         // 商品基本信息表_goods
         goodsService.add(goods);
-
+        goods.setGoodsNum(goods.getId().toString());
+        goodsService.updateById(goods);
         // 商品规格表_goods_specification
         for (GoodsSpecification specification : specifications) {
             specification.setGoodsNum(goods.getId().toString());

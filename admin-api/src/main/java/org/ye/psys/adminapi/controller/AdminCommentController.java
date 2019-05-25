@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("admin/comment")
-public class CommentController {
+public class AdminCommentController {
     @Autowired
     private CommentService commentService;
 

@@ -30,8 +30,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/goods")
 @Validated
-public class GoodsController {
-    private final Log logger = LogFactory.getLog(GoodsController.class);
+public class AdminGoodsController {
+    private final Log logger = LogFactory.getLog(AdminGoodsController.class);
 
     @Autowired
     private GoodsService goodsService;
@@ -43,8 +43,6 @@ public class GoodsController {
     private CategoryService categoryService;
     @Autowired
     private AdminGoodsService adminGoodsService;
-    @Autowired
-    private OrdersService ordersService;
     @Autowired
     private OrderGoodsService orderGoodsService;
 
@@ -164,11 +162,17 @@ public class GoodsController {
     }
 
     @RequiresPermissions("admin:goods:data")
-    @RequiresPermissionsDesc(menu = {"参谋", "数据分析"}, button = "销售排行榜")
+    @RequiresPermissionsDesc(menu = {"参谋", "数据分析"}, button = "排行榜")
     @PostMapping("/data")
     public Object data(@RequestBody String body) {
         Integer isSingle = JacksonUtil.parseInteger(body, "isSingle");
         Integer time = JacksonUtil.parseInteger(body, "time");
+        if (isSingle == null) {
+            isSingle = 3;
+        }
+        if (time == null) {
+            time = 15;
+        }
         List list = new ArrayList();
 
         long end = System.currentTimeMillis();
@@ -193,6 +197,7 @@ public class GoodsController {
                 BigDecimal total = (BigDecimal) map.get("total");
                 Goods goods = goodsService.findByGoodsNum(goodsN);
                 Map temp = new HashedMap();
+                temp.put("rank", i + 1);
                 temp.put("newName", goods.getName());
                 temp.put("total", total);
                 nList.add(temp);
@@ -203,6 +208,7 @@ public class GoodsController {
         data.put("list", list);
         return ResponseUtil.ok(data);
     }
+
 
 
 }

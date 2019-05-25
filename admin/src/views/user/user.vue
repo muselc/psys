@@ -31,12 +31,6 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="状态" prop="status">
-        <template slot-scope="scope">
-          <el-tag>{{ statusDic[scope.row.status] }}</el-tag>
-        </template>
-      </el-table-column>
-
       <el-table-column align="center" label="操作" width="200" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
@@ -72,12 +66,7 @@
             <el-option :value="0" label="普通用户"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="dataForm.status">
-            <el-option :value="0" label="离线"/>
-            <el-option :value="1" label="在线"/>
-          </el-select>
-        </el-form-item>
+        
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
@@ -130,8 +119,7 @@ export default {
       },
       downloadLoading: false,
       genderDic: ['未知', '男', '女'],
-      levelDic: ['普通用户'],
-      statusDic: ['离线', '在线']
+      levelDic: ['普通用户']  
     }
   },
   created() {

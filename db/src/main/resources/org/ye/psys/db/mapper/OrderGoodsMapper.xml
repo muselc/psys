@@ -607,6 +607,15 @@
     order by total DESC
     limit 10
   </select>
+
+  <select id="queryByGoodsRank" resultType="map">
+    select goods_sn,sum(number) as total
+    from order_goods
+    where create_time between #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR} and isfinish = true
+    group by goods_sn
+    order by total DESC
+    limit 11
+  </select>
   <select id="queryByGoodsSnL2" resultType="map">
    SELECT category.name as newName,sum(ttt) as total
     FROM category RIGHT join

@@ -10,13 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ye.psys.adminapi.annotation.RequiresPermissionsDesc;
-import org.ye.psys.core.util.JacksonUtil;
 import org.ye.psys.core.util.ResponseUtil;
 import org.ye.psys.core.validator.Order;
 import org.ye.psys.core.validator.Sort;
-import org.ye.psys.db.entity.Address;
 import org.ye.psys.db.entity.Area;
-import org.ye.psys.db.service.AddressService;
 import org.ye.psys.db.service.AreaService;
 
 import javax.validation.constraints.NotNull;
@@ -31,8 +28,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/admin/area")
-public class AreaController {
-    private final Log logger = LogFactory.getLog(AreaController.class);
+public class AdminAreaController {
+    private final Log logger = LogFactory.getLog(AdminAreaController.class);
 
     @Autowired
     private AreaService areaService;
@@ -44,7 +41,7 @@ public class AreaController {
     }
 
     @RequiresPermissions("admin:area:list")
-    @RequiresPermissionsDesc(menu={"商城管理" , "行政区域"}, button="查询")
+    @RequiresPermissionsDesc(menu={"商场管理" , "行政区域"}, button="查询")
     @GetMapping("/list")
     public Object list(String name, Integer code,
                        @RequestParam(defaultValue = "1") Integer page,

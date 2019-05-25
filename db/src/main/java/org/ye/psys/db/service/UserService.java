@@ -70,19 +70,6 @@ public class UserService {
         return (int) userMapper.countByExample(example);
     }
 
-    public int countByAge(int start, int end) {
-        UserExample example = new UserExample();
-        example.or().andAgeBetween(start,end).andDeletedEqualTo(false);
-        return (int) userMapper.countByExample(example);
-    }
-
-
-    public int countOn() {
-        UserExample example = new UserExample();
-        example.or().andStatusEqualTo((byte) 1).andDeletedEqualTo(false);
-        return (int) userMapper.countByExample(example);
-    }
-
 
     public List<User> queryByMobile(String mobile) {
         UserExample example = new UserExample();

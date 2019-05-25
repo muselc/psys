@@ -1,8 +1,5 @@
 package org.ye.psys.adminapi.service;
 
-import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.logging.Log;
@@ -14,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.ye.psys.core.config.Kd;
 import org.ye.psys.core.config.KdApiOrderDistinguish;
-import org.ye.psys.core.notify.NotifyService;
-import org.ye.psys.core.notify.NotifyType;
 import org.ye.psys.core.util.JacksonUtil;
 import org.ye.psys.core.util.OrderUtil;
 import org.ye.psys.core.util.ResponseUtil;
@@ -48,8 +43,7 @@ public class AdminOrderService {
     private CommentService commentService;
     @Autowired
     private WxPayService wxPayService;
-    @Autowired
-    private NotifyService notifyService;
+
     @Autowired
     private Kd kd;
 
@@ -87,10 +81,6 @@ public class AdminOrderService {
      * 3. 设置订单退款确认状态；
      * 4. 订单商品库存回库。
      * <p>
-     * TODO
-     * 虽然接入了微信退款API，但是从安全角度考虑，建议开发者删除这里微信退款代码，采用以下两步走步骤：
-     * 1. 管理员登录微信官方支付平台点击退款操作进行退款
-     * 2. 管理员登录管理后台点击退款操作进行订单状态修改和商品库存回库
      *
      * @param body 订单信息，{ orderId：xxx }
      * @return 订单退款操作结果
@@ -100,7 +90,7 @@ public class AdminOrderService {
         Integer orderId = JacksonUtil.parseInteger(body, "orderId");
         String refundMoney = JacksonUtil.parseString(body, "refundMoney");
         if (orderId == null) {
-            return ResponseUtil.badArgument();
+           return ResponseUtil.badArgument();
         }
         if (StringUtils.isEmpty(refundMoney)) {
             return ResponseUtil.badArgument();
@@ -117,35 +107,9 @@ public class AdminOrderService {
 
         // 如果订单不是退款状态，则不能退款
         if (!order.getOrderStatus().equals(OrderUtil.STATUS_REFUND)) {
-            return ResponseUtil.fail(ORDER_CONFIRM_NOT_ALLOWED, "订单不能确认收货");
+            return ResponseUtil.fail(ORDER_CONFIRM_NOT_ALLOWED, "订单不能退款");
         }
-
-        // 微信退款
-        WxPayRefundRequest wxPayRefundRequest = new WxPayRefundRequest();
-        wxPayRefundRequest.setOutTradeNo(order.getOrderSn());
-        wxPayRefundRequest.setOutRefundNo("refund_" + order.getOrderSn());
-        // 元转成分
-        Integer totalFee = order.getActualPrice().multiply(new BigDecimal(100)).intValue();
-        wxPayRefundRequest.setTotalFee(totalFee);
-        wxPayRefundRequest.setRefundFee(totalFee);
-
-        WxPayRefundResult wxPayRefundResult = null;
-        try {
-            wxPayRefundResult = wxPayService.refund(wxPayRefundRequest);
-        } catch (WxPayException e) {
-            e.printStackTrace();
-            return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单退款失败");
-        }
-        if (!wxPayRefundResult.getReturnCode().equals("SUCCESS")) {
-            logger.warn("refund fail: " + wxPayRefundResult.getReturnMsg());
-            return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单退款失败");
-        }
-        if (!wxPayRefundResult.getResultCode().equals("SUCCESS")) {
-            logger.warn("refund fail: " + wxPayRefundResult.getReturnMsg());
-            return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单退款失败");
-        }
-
-        // 设置订单取消状态
+         //设置订单取消状态
         order.setOrderStatus(OrderUtil.STATUS_REFUND_CONFIRM);
         if (ordersService.update(order) == 0) {
             throw new RuntimeException("更新数据已失效");
@@ -160,14 +124,78 @@ public class AdminOrderService {
                 throw new RuntimeException("商品货品库存增加失败");
             }
         }
-
-        //TODO 发送邮件和短信通知，这里采用异步发送
-        // 退款成功通知用户, 例如“您申请的订单退款 [ 单号:{1} ] 已成功，请耐心等待到账。”
-        // 注意订单号只发后6位
-        notifyService.notifySmsTemplate(order.getMobile(), NotifyType.REFUND, new String[]{order.getOrderSn().substring(8, 14)});
-
         return ResponseUtil.ok();
     }
+//    @Transactional
+//    public Object refund(String body) {
+//        Integer orderId = JacksonUtil.parseInteger(body, "orderId");
+//        String refundMoney = JacksonUtil.parseString(body, "refundMoney");
+//        if (orderId == null) {
+//            return ResponseUtil.badArgument();
+//        }
+//        if (StringUtils.isEmpty(refundMoney)) {
+//            return ResponseUtil.badArgument();
+//        }
+//
+//        Orders order = ordersService.findById(orderId);
+//        if (order == null) {
+//            return ResponseUtil.badArgument();
+//        }
+//
+//        if (order.getActualPrice().compareTo(new BigDecimal(refundMoney)) != 0) {
+//            return ResponseUtil.badArgumentValue();
+//        }
+//
+//        // 如果订单不是退款状态，则不能退款
+//        if (!order.getOrderStatus().equals(OrderUtil.STATUS_REFUND)) {
+//            return ResponseUtil.fail(ORDER_CONFIRM_NOT_ALLOWED, "订单不能确认收货");
+//        }
+//
+//        // 微信退款
+//        WxPayRefundRequest wxPayRefundRequest = new WxPayRefundRequest();
+//        wxPayRefundRequest.setOutTradeNo(order.getOrderSn());
+//        wxPayRefundRequest.setOutRefundNo("refund_" + order.getOrderSn());
+//        // 元转成分
+//        Integer totalFee = order.getActualPrice().multiply(new BigDecimal(100)).intValue();
+//        wxPayRefundRequest.setTotalFee(totalFee);
+//        wxPayRefundRequest.setRefundFee(totalFee);
+//
+//        WxPayRefundResult wxPayRefundResult = null;
+//        try {
+//            wxPayRefundResult = wxPayService.refund(wxPayRefundRequest);
+//        } catch (WxPayException e) {
+//            e.printStackTrace();
+//            return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单退款失败");
+//        }
+//        if (!wxPayRefundResult.getReturnCode().equals("SUCCESS")) {
+//            logger.warn("refund fail: " + wxPayRefundResult.getReturnMsg());
+//            return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单退款失败");
+//        }
+//        if (!wxPayRefundResult.getResultCode().equals("SUCCESS")) {
+//            logger.warn("refund fail: " + wxPayRefundResult.getReturnMsg());
+//            return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单退款失败");
+//        }
+//
+//        // 设置订单取消状态
+//        order.setOrderStatus(OrderUtil.STATUS_REFUND_CONFIRM);
+//        if (ordersService.update(order) == 0) {
+//            throw new RuntimeException("更新数据已失效");
+//        }
+//
+//        // 商品货品数量增加
+//        List<OrderGoods> orderGoodsList = orderGoodsService.findByOrderId(orderId);
+//        for (OrderGoods orderGoods : orderGoodsList) {
+//            Integer stockId = orderGoods.getProductId();
+//            int number = orderGoods.getNumber();
+//            if (goodsStockService.addStock(stockId, number) == 0) {
+//                throw new RuntimeException("商品货品库存增加失败");
+//            }
+//        }
+//
+//        notifyService.notifySmsTemplate(order.getMobile(), NotifyType.REFUND, new String[]{order.getOrderSn().substring(8, 14)});
+//
+//        return ResponseUtil.ok();
+//    }
 
     /**
      * 发货
@@ -176,8 +204,6 @@ public class AdminOrderService {
      *
      * @param body 订单信息，{ orderId：xxx, shipSn: xxx, shipChannel: xxx }
      * @return 订单操作结果
-     * 成功则 { errno: 0, errmsg: '成功' }
-     * 失败则 { errno: XXX, errmsg: XXX }
      */
     @Transactional
     public Object ship(String body) {
@@ -206,11 +232,6 @@ public class AdminOrderService {
             return ResponseUtil.updatedDateExpired();
         }
 
-        //TODO 发送邮件和短信通知，这里采用异步发送
-        // 发货会发送通知短信给用户:          *
-        // "您的订单已经发货，快递公司 {1}，快递单 {2} ，请注意查收"
-        notifyService.notifySmsTemplate(order.getMobile(), NotifyType.SHIP, new String[]{shipChannel, shipSn});
-
         return ResponseUtil.ok();
     }
 
@@ -232,40 +253,5 @@ public class AdminOrderService {
         return ResponseUtil.fail();
     }
 
-
-    /**
-     * 回复订单商品
-     *
-     * @param body 订单信息，{ orderId：xxx }
-     * @return 订单操作结果
-     * 成功则 { errno: 0, errmsg: '成功' }
-     * 失败则 { errno: XXX, errmsg: XXX }
-     */
-//    public Object reply(String body) {
-//        Integer commentId = JacksonUtil.parseInteger(body, "commentId");
-//        if (commentId == null || commentId == 0) {
-//            return ResponseUtil.badArgument();
-//        }
-//        // 目前只支持回复一次
-//        if (commentService.findById(commentId) != null) {
-//            return ResponseUtil.fail(ORDER_REPLY_EXIST, "订单商品已回复！");
-//        }
-//        String content = JacksonUtil.parseString(body, "content");
-//        if (StringUtils.isEmpty(content)) {
-//            return ResponseUtil.badArgument();
-//        }
-//        // 创建评价回复
-//        Comment comment = new Comment();
-//        comment.setType((byte) 2);
-//        comment.setValueId(commentId);
-//        comment.setContent(content);
-//        comment.setUserId(0);                 // 评价回复没有用
-//        comment.setStar((short) 0);           // 评价回复没有用
-//        comment.setHasPicture(false);        // 评价回复没有用
-//        comment.setPicUrls(new String[]{});  // 评价回复没有用
-//        commentService.save(comment);
-//
-//        return ResponseUtil.ok();
-//    }
 
 }

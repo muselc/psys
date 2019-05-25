@@ -4,9 +4,7 @@
     <el-card class="box-card">
       <h3>商品介绍</h3>
       <el-form ref="goods" :rules="rules" :model="goods" label-width="150px">
-        <el-form-item label="商品编号" prop="goodsNum">
-          <el-input v-model="goods.goodsNum"/>
-        </el-form-item>
+       
         <el-form-item label="商品名称" prop="name">
           <el-input v-model="goods.name"/>
         </el-form-item>
@@ -238,41 +236,6 @@
       </el-dialog>
     </el-card>
 
-    <!-- <el-card class="box-card">
-      <h3>商品参数</h3>
-      <el-button :plain="true" type="primary" @click="handleAttributeShow">添加</el-button>
-      <el-table :data="attributes">
-        <el-table-column property="attribute" label="商品参数名称"/>
-        <el-table-column property="value" label="商品参数值"/>
-        <el-table-column align="center" label="操作" width="100" class-name="small-padding fixed-width">
-          <template slot-scope="scope">
-            <el-button type="danger" size="mini" @click="handleAttributeDelete(scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <el-dialog :visible.sync="attributeVisiable" title="设置商品参数">
-        <el-form
-          ref="attributeForm"
-          :model="attributeForm"
-          status-icon
-          label-position="left"
-          label-width="100px"
-          style="width: 400px; margin-left:50px;">
-          <el-form-item label="商品参数名称" prop="attribute">
-            <el-input v-model="attributeForm.attribute"/>
-          </el-form-item>
-          <el-form-item label="商品参数值" prop="value">
-            <el-input v-model="attributeForm.value"/>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="attributeVisiable = false">取消</el-button>
-          <el-button type="primary" @click="handleAttributeAdd">确定</el-button>
-        </div>
-      </el-dialog>
-    </el-card> -->
-
     <div class="op-container">
       <el-button @click="handleCancel">取消</el-button>
       <el-button type="primary" @click="handlePublish">上架</el-button>
@@ -356,7 +319,6 @@ export default {
       attributeForm: { attribute: '', value: '' },
       attributes: [],
       rules: {
-        goodsNum: [{ required: true, message: '商品编号不能为空', trigger: 'blur' }],
         name: [{ required: true, message: '商品名称不能为空', trigger: 'blur' }]
       },
       editorInit: {

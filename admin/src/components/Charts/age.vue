@@ -67,25 +67,25 @@ export default {
               left: 'left'
             },
             series: [
-              {
-                name: '年龄',
-                type: 'pie',
-                radius: '55%',
-                center: ['30%', '60%'],
-                data: ageData,
-                itemStyle: {
-                  emphasis: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                  }
-                }
-              },
+            //   {
+            //     name: '年龄',
+            //     type: 'pie',
+            //     radius: '55%',
+            //     center: ['30%', '60%'],
+            //     data: ageData,
+            //     itemStyle: {
+            //       emphasis: {
+            //         shadowBlur: 10,
+            //         shadowOffsetX: 0,
+            //         shadowColor: 'rgba(0, 0, 0, 0.5)'
+            //       }
+            //     }
+            //   },
               {
                 name: "性别",
                 type: "pie",
                 radius: "55%",
-                center: ["70%", "60%"],
+                center: ["50%", "50%"],
                 data: sexData,
                 itemStyle: {
                   emphasis: {

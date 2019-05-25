@@ -23,8 +23,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/issue")
 @Validated
-public class IssueController {
-    private final Log logger = LogFactory.getLog(IssueController.class);
+public class AdminIssueController {
+    private final Log logger = LogFactory.getLog(AdminIssueController.class);
 
     @Autowired
     private IssueService issueService;

@@ -65,6 +65,9 @@ public class WxAddressController {
             return ResponseUtil.badArgument();
         }
         addressService.deleteAddress(address.getId());
+        Area area = areaService.findById(address.getCityId());
+        area.setValue(area.getValue() - 1);
+        areaService.updateValue(area);
         return ResponseUtil.ok();
     }
 
@@ -80,18 +83,18 @@ public class WxAddressController {
             address.setId(null);
             address.setUserId(userId);
             addressService.addAddress(address);
-            Area area = areaService.findById(address.getProvinceId());
+            Area area = areaService.findById(address.getCityId());
             area.setValue(area.getValue() + 1);
             areaService.updateValue(area);
         } else {
             address.setUserId(userId);
             Address addressTemp = addressService.findById(address.getId());
-            if (null != address.getProvinceId() && !addressTemp.getProvinceId().equals(address.getProvinceId())) {
-                Area aread = areaService.findById(addressTemp.getProvinceId());
+            if (null != address.getCityId() && !addressTemp.getCityId().equals(address.getCityId())) {
+                Area aread = areaService.findById(addressTemp.getCityId());
                 aread.setValue(aread.getValue() - 1);
                 areaService.updateValue(aread);
 
-                Area areau = areaService.findById(address.getProvinceId());
+                Area areau = areaService.findById(address.getCityId());
                 areau.setValue(areau.getValue() + 1);
                 areaService.updateValue(areau);
             }

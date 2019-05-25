@@ -12,6 +12,7 @@ import org.ye.psys.core.system.SystemConfig;
 import org.ye.psys.core.util.JacksonUtil;
 import org.ye.psys.core.util.OrderUtil;
 import org.ye.psys.core.util.ResponseUtil;
+import org.ye.psys.core.validator.Order;
 import org.ye.psys.db.entity.*;
 import org.ye.psys.db.service.*;
 import org.ye.psys.wxapi.util.IpUtil;
@@ -154,8 +155,11 @@ public class WxOrderService {
             total += cart.getNumber() * cart.getPrice().doubleValue();
         }
         //商品总价
-
         BigDecimal checkedGoodsPrice = new BigDecimal(total);
+
+        if (checkedGoodsPrice.doubleValue() < systemService.findByKName(SystemConfig.MALL_EXPRESS_FREIGHT_MIN)){
+            freightPrice = new BigDecimal(systemService.findByKName(SystemConfig.MALL_EXPRESS_FREIGHT_VALUE));
+        }
         //订单总价
         BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice);
         //生成订单
@@ -168,9 +172,7 @@ public class WxOrderService {
         String detailedAddress = detailedAddress(address);
         order.setAddress(detailedAddress);
         order.setGoodsPrice(checkedGoodsPrice);
-        if (orderTotalPrice.doubleValue() < systemService.findByKName(SystemConfig.MALL_EXPRESS_FREIGHT_MIN)){
-            freightPrice = new BigDecimal(systemService.findByKName(SystemConfig.MALL_EXPRESS_FREIGHT_VALUE));
-        }
+
         order.setFreightPrice(freightPrice);
         order.setActualPrice(orderTotalPrice);
 
@@ -462,4 +464,12 @@ public class WxOrderService {
 
     }
 
+    public Object refund(Integer orderId) {
+        Orders order = ordersService.findById(orderId);
+        if (OrderUtil.isPayStatus(order)) {
+            order.setOrderStatus(OrderUtil.STATUS_REFUND);
+        }
+        ordersService.update(order);
+        return ResponseUtil.ok();
+    }
 }

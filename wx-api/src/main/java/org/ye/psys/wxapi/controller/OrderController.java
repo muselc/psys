@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.ye.psys.core.util.JacksonUtil;
+import org.ye.psys.core.util.ResponseUtil;
 import org.ye.psys.db.entity.Cart;
 import org.ye.psys.wxapi.annotation.LoginUser;
 import org.ye.psys.wxapi.service.WxOrderService;
@@ -112,5 +113,18 @@ public class OrderController {
         return wxOrderService.paySucess(userId, orderId, httpServletRequest);
     }
 
+
+    /**
+     * 申请退款
+     */
+    @RequestMapping(value = "refund", method = RequestMethod.POST)
+    public Object refund(@RequestBody String body) {
+        Integer userId = JacksonUtil.parseInteger(body, "userId");
+        Integer orderId = JacksonUtil.parseInteger(body, "orderId");
+        if (userId == null) {
+            return ResponseUtil.unlogin();
+        }
+        return wxOrderService.refund(orderId);
+    }
 
 }

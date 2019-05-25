@@ -1,15 +1,16 @@
 package org.ye.psys.core.util;
 
 
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-@Component
+
 public class UserTokenManager {
+
     public static Map<String, UserToken> tokenMap = new HashMap<>();
     public static Map<Integer, UserToken> idMap = new HashMap<>();
+    //登录次数
+    private static int oneDay;
 
     public static Integer getUserId(String token) {
         UserToken userToken = tokenMap.get(token);
@@ -37,7 +38,7 @@ public class UserTokenManager {
         }
 
         String token = CharUtil.getRandomString(32);
-        while (tokenMap.containsKey(token)) {
+        if (tokenMap.containsKey(token)) {
             token = CharUtil.getRandomString(32);
         }
 
@@ -51,7 +52,7 @@ public class UserTokenManager {
         userToken.setUserId(id);
         tokenMap.put(token, userToken);
         idMap.put(id, userToken);
-
+        oneDay++;
         return userToken;
     }
 
@@ -77,8 +78,15 @@ public class UserTokenManager {
         tokenMap.remove(token);
     }
 
-    public static int count() {
+    public static int online() {
         return idMap.size();
+    }
+
+    public static int oneDay() {
+        return oneDay;
+    }
+    public static void oneDayReset(){
+        oneDay = 0;
     }
 }
 

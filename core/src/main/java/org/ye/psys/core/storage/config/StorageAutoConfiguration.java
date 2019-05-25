@@ -3,7 +3,6 @@ package org.ye.psys.core.storage.config;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.ye.psys.core.storage.LocalStorage;
 import org.ye.psys.core.storage.StoragesService;
 import org.ye.psys.core.storage.TencentStorage;
 
@@ -22,24 +21,13 @@ public class StorageAutoConfiguration {
         StoragesService storagesService = new StoragesService();
         String active = this.properties.getActive();
         storagesService.setActive(active);
-        if (active.equals("local")) {
-            storagesService.setStorages(localStorage());
-        } else if (active.equals("tencent")) {
+        if (active.equals("tencent")) {
             storagesService.setStorages(tencentStorage());
         }else {
             throw new RuntimeException("当前存储模式 " + active + " 不支持");
         }
 
         return storagesService;
-    }
-
-    @Bean
-    public LocalStorage localStorage() {
-        LocalStorage localStorage = new LocalStorage();
-        StorageProperties.Local local = this.properties.getLocal();
-        localStorage.setAddress(local.getAddress());
-        localStorage.setStoragePath(local.getStoragePath());
-        return localStorage;
     }
 
     @Bean

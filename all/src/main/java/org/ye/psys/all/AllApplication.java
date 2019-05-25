@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(scanBasePackages = {"org.ye.psys"})
-@MapperScan("org.ye.psys.db.dao")
+@MapperScan("org.ye.psys.db.mapper")
 @EnableScheduling
 @EnableTransactionManagement
 public class AllApplication {

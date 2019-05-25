@@ -28,17 +28,14 @@ import java.util.*;
 @RestController
 @RequestMapping("/admin/auth")
 @Validated
-public class AuthController {
-    private final Log logger = LogFactory.getLog(AuthController.class);
+public class AdminAuthController {
+    private final Log logger = LogFactory.getLog(AdminAuthController.class);
 
     @Autowired
     private RoleService roleService;
     @Autowired
     private PermissionService permissionService;
 
-    /*
-     *  { username : value, password : value }
-     */
     @PostMapping("/login")
     public Object login(@RequestBody String body) {
         String username = JacksonUtil.parseString(body, "username");
@@ -62,9 +59,7 @@ public class AuthController {
         return ResponseUtil.ok(currentUser.getSession().getId());
     }
 
-    /*
-     *
-     */
+
     @RequiresAuthentication
     @PostMapping("/logout")
     public Object login() {

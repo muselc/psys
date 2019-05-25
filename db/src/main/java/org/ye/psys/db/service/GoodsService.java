@@ -9,8 +9,11 @@ import org.ye.psys.db.entity.Goods;
 import org.ye.psys.db.entity.Goods.Column;
 import org.ye.psys.db.entity.GoodsExample;
 import org.ye.psys.db.entity.GoodsSpecification;
+import org.ye.psys.db.entity.Orders;
 import org.ye.psys.db.mapper.GoodsMapper;
 import org.ye.psys.db.mapper.GoodsSpecificationMapper;
+import org.ye.psys.db.mapper.OrderGoodsMapper;
+import org.ye.psys.db.mapper.OrdersMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +24,8 @@ public class GoodsService {
 
     @Autowired
     private GoodsMapper goodsMapper;
+
+
 
     public List<Goods> findByHot(int offset, int limit) {
         GoodsExample example = new GoodsExample();
@@ -119,10 +124,10 @@ public class GoodsService {
         return goodsMapper.countByExample(example) != 0;
     }
 
-    public void add(Goods goods) {
+    public int add(Goods goods) {
         goods.setCreateTime(LocalDateTime.now());
         goods.setUpdateTime(LocalDateTime.now());
-        goodsMapper.insertSelective(goods);
+        return goodsMapper.insertSelective(goods);
     }
 
     public boolean checkExistByGoodsNum(String goodsNum) {
@@ -136,4 +141,6 @@ public class GoodsService {
         example.or().andCategoryIdEqualTo(id).andDeletedEqualTo(false);
         return goodsMapper.countByExample(example);
     }
+
+
 }

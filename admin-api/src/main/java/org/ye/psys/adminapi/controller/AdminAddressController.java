@@ -28,8 +28,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/admin/address")
-public class AddressController {
-    private final Log logger = LogFactory.getLog(AddressController.class);
+public class AdminAddressController {
+    private final Log logger = LogFactory.getLog(AdminAddressController.class);
 
     @Autowired
     private AddressService addressService;

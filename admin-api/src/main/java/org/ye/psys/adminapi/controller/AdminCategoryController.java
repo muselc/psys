@@ -13,7 +13,6 @@ import org.ye.psys.core.util.ResponseUtil;
 import org.ye.psys.core.validator.Order;
 import org.ye.psys.core.validator.Sort;
 import org.ye.psys.db.entity.Category;
-import org.ye.psys.db.entity.Goods;
 import org.ye.psys.db.service.CategoryService;
 import org.ye.psys.db.service.GoodsService;
 
@@ -26,8 +25,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/category")
 @Validated
-public class CategoryController {
-    private final Log logger = LogFactory.getLog(CategoryController.class);
+public class AdminCategoryController {
+    private final Log logger = LogFactory.getLog(AdminCategoryController.class);
 
     @Autowired
     private CategoryService categoryService;

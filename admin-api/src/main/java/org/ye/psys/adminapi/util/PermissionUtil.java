@@ -75,7 +75,6 @@ public class PermissionUtil {
                 perm2.getChildren().add(leftPerm);
             }
             else{
-                // TODO
                 // 目前限制Controller里面每个方法的RequiresPermissionsDesc注解是唯一的
                 // 如果允许相同，可能会造成内部权限不一致。
                 throw new RuntimeException("权限已经存在，不能添加新权限");
@@ -132,8 +131,7 @@ public class PermissionUtil {
                     permissions.add(permission);
                     continue;
                 }
-                // TODO
-                // 这里只支持GetMapping注解或者PostMapping注解，应该进一步提供灵活性
+                // 这里只支持GetMapping注解或者PostMapping注解
                 throw new RuntimeException("目前权限管理应该在method的前面使用GetMapping注解或者PostMapping注解");
             }
         }

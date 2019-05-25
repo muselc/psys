@@ -4,9 +4,7 @@
     <el-card class="box-card">
       <h3>商品介绍</h3>
       <el-form ref="goods" :rules="rules" :model="goods" label-width="150px">
-        <el-form-item label="商品编号" prop="goodsNum">
-          <el-input v-model="goods.goodsNum"/>
-        </el-form-item>
+       
         <el-form-item label="商品名称" prop="name">
           <el-input v-model="goods.name"/>
         </el-form-item>
@@ -313,9 +311,6 @@ export default {
       attributeForm: { attribute: '', value: '' },
       attributes: [],
       rules: {
-        goodsNum: [
-          { required: true, message: '商品编号不能为空', trigger: 'blur' }
-        ],
         name: [{ required: true, message: '商品名称不能为空', trigger: 'blur' }]
       },
       editorInit: {

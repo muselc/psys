@@ -78,10 +78,10 @@ export default {
         this.__resizeHandler()
       }
     },
-    setOptions({ actualData, expectedData } = {}) {
+    setOptions({ actualData, expectedData,names } = {}) {
       this.chart.setOption({
         xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: ['Mon('+names[0]+')', 'Tue('+names[1]+')', 'Wed('+names[2]+')', 'Thu('+names[3]+')', 'Fri('+names[4]+')', 'Sat('+names[5]+')', 'Sun('+names[6]+')'],
           boundaryGap: false,
           axisTick: {
             show: false

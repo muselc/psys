@@ -26,8 +26,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/admin/history")
-public class HistoryController {
-    private final Log logger = LogFactory.getLog(HistoryController.class);
+public class AdminHistoryController {
+    private final Log logger = LogFactory.getLog(AdminHistoryController.class);
 
     @Autowired
     private SearchHistoryService searchHistoryService;

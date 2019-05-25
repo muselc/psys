@@ -72,7 +72,6 @@ public class WxAuthController {
             user.setNickname(userInfo.getNickName());
             user.setGender(userInfo.getGender());
             user.setUserLevel((byte) 0);
-            user.setStatus((byte) 0);
             user.setLastLoginTime(LocalDateTime.now());
             user.setLastLoginIp(IpUtil.client(request));
 

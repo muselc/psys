@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.ye.psys.adminapi.annotation.RequiresPermissionsDesc;
 import org.ye.psys.core.util.RegexUtil;
 import org.ye.psys.core.util.ResponseUtil;
-import org.ye.psys.core.util.bcrypt.BCryptPasswordEncoder;
 import org.ye.psys.core.validator.Order;
 import org.ye.psys.core.validator.Sort;
 import org.ye.psys.db.entity.User;
@@ -29,8 +28,8 @@ import static org.ye.psys.adminapi.util.AdminResponseCode.*;
  */
 @RestController
 @RequestMapping("/admin/user")
-public class UserController {
-    private final Log logger = LogFactory.getLog(UserController.class);
+public class AdminUserController {
+    private final Log logger = LogFactory.getLog(AdminUserController.class);
 
 
     @Autowired
@@ -104,7 +103,7 @@ public class UserController {
     }
 
     @RequiresPermissions("admin:user:ageandsex")
-    @RequiresPermissionsDesc(menu={"参谋" , "数据分析"}, button="年龄和性别")
+    @RequiresPermissionsDesc(menu={"参谋" , "数据分析"}, button="性别分布")
     @GetMapping("/ageandsex")
     public Object ageAndSexData() {
         int noMan = userService.findBySex(0);
@@ -126,24 +125,24 @@ public class UserController {
         }
 
         //年龄数据
-        List ageList = new ArrayList();
-
-        Map<Integer, Integer> time = new HashMap<>();
-        time.put(0, 15);
-        time.put(16, 25);
-        time.put(26, 35);
-        time.put(36, 45);
-        time.put(46, 200);
-        for (Integer start : time.keySet()) {
-            Map temp = new HashMap();
-            Integer end = time.get(start);
-            temp.put("name", start + "-" + end);
-            temp.put("value", userService.countByAge(start, end));
-            ageList.add(temp);
-        }
+//        List ageList = new ArrayList();
+//
+//        Map<Integer, Integer> time = new HashMap<>();
+//        time.put(0, 15);
+//        time.put(16, 25);
+//        time.put(26, 35);
+//        time.put(36, 45);
+//        time.put(46, 200);
+//        for (Integer start : time.keySet()) {
+//            Map temp = new HashMap();
+//            Integer end = time.get(start);
+//            temp.put("name", start + "-" + end);
+//            temp.put("value", userService.countByAge(start, end));
+//            ageList.add(temp);
+//        }
         Map<String, Object> data = new HashMap<>();
         data.put("sex", sexList);
-        data.put("age", ageList);
+//        data.put("age", ageList);
         return ResponseUtil.ok(data);
     }
 

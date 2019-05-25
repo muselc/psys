@@ -6,16 +6,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.ye.psys.core.system.SystemConfig;
 import org.ye.psys.core.util.JacksonUtil;
 import org.ye.psys.core.util.ResponseUtil;
 import org.ye.psys.db.entity.Address;
 import org.ye.psys.db.entity.Cart;
 import org.ye.psys.db.entity.Goods;
 import org.ye.psys.db.entity.GoodsStock;
-import org.ye.psys.db.service.AddressService;
-import org.ye.psys.db.service.CartService;
-import org.ye.psys.db.service.GoodsService;
-import org.ye.psys.db.service.GoodsStockService;
+import org.ye.psys.db.service.*;
 import org.ye.psys.wxapi.annotation.LoginUser;
 
 import java.math.BigDecimal;
@@ -40,6 +38,8 @@ public class CartController {
     private GoodsStockService goodsStockService;
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private SystemService systemService;
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public Object add(@LoginUser Integer userId,
@@ -248,6 +248,7 @@ public class CartController {
         Integer cartId = JacksonUtil.parseInteger(body, "cartId");
         List<Cart> cartList = new ArrayList<>();
         BigDecimal total;
+        BigDecimal priceTotal;
         //购物车购买
         if (cartId == 0) {
             //购买列表
@@ -256,7 +257,7 @@ public class CartController {
             double totals = 0.00;
             for (int i = 0; i < cartList.size(); ++i) {
                 Cart temp = cartList.get(i);
-                totals = temp.getPrice().doubleValue() * temp.getNumber();
+                totals += temp.getPrice().doubleValue() * temp.getNumber();
             }
             //总价格
             total = new BigDecimal(totals);
@@ -278,10 +279,17 @@ public class CartController {
             address = new Address();
             address.setId(0);
         }
+        double freight = 0.00;
+        if (total.doubleValue()<systemService.findByKName(SystemConfig.MALL_EXPRESS_FREIGHT_MIN)){
+            freight = systemService.findByKName(SystemConfig.MALL_EXPRESS_FREIGHT_VALUE);
+        }
+        priceTotal = new BigDecimal(total.doubleValue()+freight);
         Map<String, Object> data = new HashMap<>();
         data.put("address", address);
         data.put("cartList", cartList);
+        data.put("priceTotal",priceTotal);
         data.put("total", total);
+        data.put("freight", freight);
         return ResponseUtil.ok(data);
 
     }
